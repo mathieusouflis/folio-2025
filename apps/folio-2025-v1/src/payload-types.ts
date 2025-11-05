@@ -69,15 +69,31 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    collaborators: Collaborator;
+    projects: Project;
+    roles: Role;
+    projectTypes: ProjectType;
+    skills: Skill;
+    activities: Activity;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    collaborators: {
+      relatedProjects: 'projects';
+    };
+  };
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    collaborators: CollaboratorsSelect<false> | CollaboratorsSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    roles: RolesSelect<false> | RolesSelect<true>;
+    projectTypes: ProjectTypesSelect<false> | ProjectTypesSelect<true>;
+    skills: SkillsSelect<false> | SkillsSelect<true>;
+    activities: ActivitiesSelect<false> | ActivitiesSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -86,8 +102,12 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    aboutPage: AboutPage;
+  };
+  globalsSelect: {
+    aboutPage: AboutPageSelect<false> | AboutPageSelect<true>;
+  };
   locale: 'en' | 'fr';
   user: User & {
     collection: 'users';
@@ -160,6 +180,164 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collaborators".
+ */
+export interface Collaborator {
+  id: number;
+  displayName?: string | null;
+  folioOwner?: boolean | null;
+  firstName: string;
+  lastName: string;
+  email?: string | null;
+  socials?:
+    | {
+        platform: 'twitter' | 'linkedin' | 'github' | 'dribble' | 'behance';
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  relatedProjects?: {
+    docs?: (number | Project)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: number;
+  archive: boolean;
+  cover: number | Media;
+  showreel?: (number | null) | Media;
+  title: string;
+  description: string;
+  clientName?: string | null;
+  clientUrl?: string | null;
+  skills?: (number | Skill)[] | null;
+  projectType?: (number | null) | ProjectType;
+  endDate: string;
+  collaborators?:
+    | {
+        collaborator?: (number | null) | Collaborator;
+        roles?: (number | Role)[] | null;
+        id?: string | null;
+      }[]
+    | null;
+  images?:
+    | {
+        image?: (number | null) | Media;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  projectContent?:
+    | {
+        title: string;
+        content: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        images?:
+          | {
+              image?: (number | null) | Media;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'projectSection';
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "skills".
+ */
+export interface Skill {
+  id: number;
+  skill: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projectTypes".
+ */
+export interface ProjectType {
+  id: number;
+  type: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "roles".
+ */
+export interface Role {
+  id: number;
+  roleName: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "activities".
+ */
+export interface Activity {
+  id: number;
+  cover: number | Media;
+  name: string;
+  description: string;
+  content?:
+    | (
+        | {
+            medias?:
+              | {
+                  media?: (number | Media)[] | null;
+                  date?: string | null;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'mediasPage';
+          }
+        | {
+            approxMinutesPerYear: number;
+            showcasePlaylists?:
+              | {
+                  playlistUrl: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'musicPage';
+          }
+      )[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -189,6 +367,30 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'collaborators';
+        value: number | Collaborator;
+      } | null)
+    | ({
+        relationTo: 'projects';
+        value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'roles';
+        value: number | Role;
+      } | null)
+    | ({
+        relationTo: 'projectTypes';
+        value: number | ProjectType;
+      } | null)
+    | ({
+        relationTo: 'skills';
+        value: number | Skill;
+      } | null)
+    | ({
+        relationTo: 'activities';
+        value: number | Activity;
       } | null)
     | ({
         relationTo: 'payload-kv';
@@ -278,6 +480,145 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collaborators_select".
+ */
+export interface CollaboratorsSelect<T extends boolean = true> {
+  displayName?: T;
+  folioOwner?: T;
+  firstName?: T;
+  lastName?: T;
+  email?: T;
+  socials?:
+    | T
+    | {
+        platform?: T;
+        url?: T;
+        id?: T;
+      };
+  relatedProjects?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  archive?: T;
+  cover?: T;
+  showreel?: T;
+  title?: T;
+  description?: T;
+  clientName?: T;
+  clientUrl?: T;
+  skills?: T;
+  projectType?: T;
+  endDate?: T;
+  collaborators?:
+    | T
+    | {
+        collaborator?: T;
+        roles?: T;
+        id?: T;
+      };
+  images?:
+    | T
+    | {
+        image?: T;
+        description?: T;
+        id?: T;
+      };
+  projectContent?:
+    | T
+    | {
+        projectSection?:
+          | T
+          | {
+              title?: T;
+              content?: T;
+              images?:
+                | T
+                | {
+                    image?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "roles_select".
+ */
+export interface RolesSelect<T extends boolean = true> {
+  roleName?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projectTypes_select".
+ */
+export interface ProjectTypesSelect<T extends boolean = true> {
+  type?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "skills_select".
+ */
+export interface SkillsSelect<T extends boolean = true> {
+  skill?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "activities_select".
+ */
+export interface ActivitiesSelect<T extends boolean = true> {
+  cover?: T;
+  name?: T;
+  description?: T;
+  content?:
+    | T
+    | {
+        mediasPage?:
+          | T
+          | {
+              medias?:
+                | T
+                | {
+                    media?: T;
+                    date?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        musicPage?:
+          | T
+          | {
+              approxMinutesPerYear?: T;
+              showcasePlaylists?:
+                | T
+                | {
+                    playlistUrl?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -315,6 +656,142 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aboutPage".
+ */
+export interface AboutPage {
+  id: number;
+  Loader: {
+    firstName: string;
+    lastName: string;
+    photos: (number | Media)[];
+  };
+  Header: {
+    sidePhoto: number | Media;
+    title: string;
+    location: string;
+    description: string;
+    socials?:
+      | {
+          name: string;
+          url: string;
+          id?: string | null;
+        }[]
+      | null;
+    resumee: number | Media;
+  };
+  Other?: {
+    experiences?:
+      | {
+          title: string;
+          company: string;
+          startDate: string;
+          endDate?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    education?:
+      | {
+          major: string;
+          school: string;
+          startDate: string;
+          endDate: string;
+          id?: string | null;
+        }[]
+      | null;
+    awwards?:
+      | {
+          project: string;
+          awwarder: string;
+          mention: string;
+          id?: string | null;
+        }[]
+      | null;
+    activities?: (number | Activity)[] | null;
+    skills?:
+      | {
+          skillName: string;
+          description: string;
+          images: number | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aboutPage_select".
+ */
+export interface AboutPageSelect<T extends boolean = true> {
+  Loader?:
+    | T
+    | {
+        firstName?: T;
+        lastName?: T;
+        photos?: T;
+      };
+  Header?:
+    | T
+    | {
+        sidePhoto?: T;
+        title?: T;
+        location?: T;
+        description?: T;
+        socials?:
+          | T
+          | {
+              name?: T;
+              url?: T;
+              id?: T;
+            };
+        resumee?: T;
+      };
+  Other?:
+    | T
+    | {
+        experiences?:
+          | T
+          | {
+              title?: T;
+              company?: T;
+              startDate?: T;
+              endDate?: T;
+              id?: T;
+            };
+        education?:
+          | T
+          | {
+              major?: T;
+              school?: T;
+              startDate?: T;
+              endDate?: T;
+              id?: T;
+            };
+        awwards?:
+          | T
+          | {
+              project?: T;
+              awwarder?: T;
+              mention?: T;
+              id?: T;
+            };
+        activities?: T;
+        skills?:
+          | T
+          | {
+              skillName?: T;
+              description?: T;
+              images?: T;
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
