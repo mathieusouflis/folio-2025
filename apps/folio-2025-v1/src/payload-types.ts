@@ -312,6 +312,7 @@ export interface Activity {
               | {
                   media?: (number | Media)[] | null;
                   date?: string | null;
+                  folder?: string | null;
                   id?: string | null;
                 }[]
               | null;
@@ -595,6 +596,7 @@ export interface ActivitiesSelect<T extends boolean = true> {
                 | {
                     media?: T;
                     date?: T;
+                    folder?: T;
                     id?: T;
                   };
               id?: T;

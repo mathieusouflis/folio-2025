@@ -47,6 +47,10 @@ export const Activities: CollectionConfig = {
                   name: 'date',
                   type: 'date',
                 },
+                {
+                  name: 'folder',
+                  type: 'text',
+                },
               ],
             },
           ],
