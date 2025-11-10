@@ -16,21 +16,29 @@ export function ProjectShowcase(props: {
 }) {
   return (
     <Link href={`projects/${props.projectId}`}>
-      <article className="relative flex flex-col h-screen px-(--gridMargin) justify-end">
+      <article className="relative select-none flex flex-col h-screen px-(--gridMargin) justify-end">
         <div className="flex flex-row justify-between h-1/3 items-center">
-          <TP className="uppercase text-white mix-blend-difference">
-            {props.projectType}
-            <br />
-            {new Date(props.endDate).getFullYear()}
-          </TP>
-          <TP className="uppercase text-white mix-blend-difference">{props.client}</TP>
-          <TP className="uppercase text-right text-white mix-blend-difference">
-            {props.skills.map((skill, idx) => (
-              <React.Fragment key={idx}>
-                {skill} <br />
-              </React.Fragment>
-            ))}
-          </TP>
+          <span className="w-full">
+            <TP className="uppercase text-white mix-blend-difference">
+              {props.projectType}
+              <br />
+              {new Date(props.endDate).getFullYear()}
+            </TP>
+          </span>
+          <span className="w-full">
+            <TP className="uppercase text-white text-center mix-blend-difference">
+              {props.client}
+            </TP>
+          </span>
+          <span className="w-full justify-center">
+            <TP className="uppercase text-right text-white mix-blend-difference">
+              {props.skills.map((skill, idx) => (
+                <React.Fragment key={idx}>
+                  {skill} <br />
+                </React.Fragment>
+              ))}
+            </TP>
+          </span>
         </div>
         <div className="flex h-1/3 items-end">
           <TDisplay className="text-white mix-blend-difference">{props.title}</TDisplay>

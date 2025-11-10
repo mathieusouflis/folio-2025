@@ -9,5 +9,6 @@
   --gridMargin: 120px;
 }
 
-p {
+body {
+  background: #fff;
 }
