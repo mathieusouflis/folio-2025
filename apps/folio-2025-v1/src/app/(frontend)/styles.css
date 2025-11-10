@@ -1,5 +1,13 @@
 @import 'tailwindcss';
 
+@theme {
+  --font-made-mirage: var(--font-made-mirage);
+  --font-geist: var(--font-geist);
+}
+
 :root {
   --gridMargin: 120px;
+}
+
+p {
 }
