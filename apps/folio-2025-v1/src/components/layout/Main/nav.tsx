@@ -6,9 +6,9 @@ import { BrandIcon } from '@/components/base/brand-icon'
 
 export function Nav() {
   return (
-    <nav className="my-2 mx-(--gridMargin) flex flex-row justify-between">
-      <BrandIcon size={'xl'} />
-      <div className="flex flex-row gap-5 items-center">
+    <nav className="fixed z-50 top-0 left-0 w-full py-2 px-(--gridMargin) flex flex-row justify-between mix-blend-difference">
+      <BrandIcon size={'xl'} color="white" />
+      <div className="flex flex-row gap-5 items-center text-white">
         <NavLinks href="/">Works</NavLinks>
         <NavLinks href="/archives">Archives</NavLinks>
         <NavLinks href="/about">About</NavLinks>

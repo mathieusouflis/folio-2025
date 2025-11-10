@@ -1,4 +1,5 @@
 'use client'
+import { cn } from '@/lib/utils/cn'
 import { useEffect, useState } from 'react'
 
 export function Time(props: { className?: string }) {
@@ -17,8 +18,8 @@ export function Time(props: { className?: string }) {
   }, [])
 
   if (!mounted) {
-    return <p>&nbsp;</p>
+    return <p className="text-white">&nbsp;</p>
   }
 
-  return <p className={props.className}>{currentTime}</p>
+  return <p className={cn(props.className, 'text-white')}>{currentTime}</p>
 }

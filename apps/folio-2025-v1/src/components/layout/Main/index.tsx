@@ -8,8 +8,8 @@ export function MainLayout(props: { children: React.ReactNode }) {
     <>
       <GridPreview />
       <Nav />
-      <main className="flex flex-col mx-(--gridMargin)">
-        <Time className="fixed left-2 bottom-2" />
+      <main className="flex flex-col">
+        <Time className="fixed left-2 bottom-2 mix-blend-difference" />
         {props.children}
       </main>
       <Footer />
