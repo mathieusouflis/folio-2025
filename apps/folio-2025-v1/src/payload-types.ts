@@ -184,6 +184,7 @@ export interface Media {
  */
 export interface Collaborator {
   id: number;
+  avatar?: (number | null) | Media;
   displayName?: string | null;
   folioOwner?: boolean | null;
   firstName: string;
@@ -485,6 +486,7 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "collaborators_select".
  */
 export interface CollaboratorsSelect<T extends boolean = true> {
+  avatar?: T;
   displayName?: T;
   folioOwner?: T;
   firstName?: T;

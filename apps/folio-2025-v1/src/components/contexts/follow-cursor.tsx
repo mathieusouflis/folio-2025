@@ -12,6 +12,7 @@ interface CursorContextType {
     new: CursorActionType[]
   }
   setCursorActions: (actions: CursorActionType[]) => void
+  clearCursorActions: () => void
 }
 
 const CursorContext = createContext<CursorContextType | undefined>(undefined)
@@ -59,6 +60,13 @@ export const CursorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }))
   }
 
+  function clearCursorActions() {
+    contextSetCursorActions((prevState) => ({
+      old: prevState.new,
+      new: [],
+    }))
+  }
+
   return (
     <CursorContext.Provider
       value={{
@@ -68,6 +76,7 @@ export const CursorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
         setIsVisible,
         cursorActions,
         setCursorActions,
+        clearCursorActions,
       }}
     >
       {children}
