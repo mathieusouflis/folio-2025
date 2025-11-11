@@ -15,8 +15,9 @@ export default async function Page({ params }: { params: { id: string } }) {
     project = await payload.findByID({
       collection: 'projects',
       id,
-      depth: 1,
+      depth: 3,
     })
+    console.log(project)
   } catch (err) {
     console.error(err)
     return redirect('/')
