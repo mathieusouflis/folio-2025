@@ -9,6 +9,10 @@
   --gridMargin: 120px;
 }
 
+* {
+  cursor: none;
+}
+
 body {
   background: #fff;
 }

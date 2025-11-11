@@ -1,3 +1,6 @@
+'use client'
+
+import { useCursor } from '@/components/contexts/follow-cursor'
 import { TDisplay } from '@/components/typograpgy/display'
 import { TP } from '@/components/typograpgy/p'
 import { Media } from '@/payload-types'
@@ -14,8 +17,21 @@ export function ProjectShowcase(props: {
   skills: string[]
   projectType: string
 }) {
+  const { setCursorActions } = useCursor()
+
   return (
-    <Link href={`projects/${props.projectId}`}>
+    <Link
+      href={`projects/${props.projectId}`}
+      onMouseOver={() =>
+        setCursorActions([
+          {
+            type: 'text-out',
+            content: `Explore ${props.title}`,
+          },
+        ])
+      }
+      onClick={() => setCursorActions([])}
+    >
       <article className="relative select-none flex flex-col h-screen px-(--gridMargin) justify-end">
         <div className="flex flex-row justify-between h-1/3 items-center">
           <span className="w-full">
