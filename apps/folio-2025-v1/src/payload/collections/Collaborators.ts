@@ -18,6 +18,11 @@ export const Collaborators: CollectionConfig = {
   },
   fields: [
     {
+      name: 'avatar',
+      type: 'upload',
+      relationTo: 'media',
+    },
+    {
       name: 'displayName',
       type: 'text',
       access: {
