@@ -9,10 +9,10 @@ export async function WorksPage() {
     collection: 'projects',
     populate: {
       skills: {
-        skill: true,
+        name: true,
       },
       projectTypes: {
-        type: true,
+        name: true,
       },
     },
     where: {
@@ -34,13 +34,13 @@ export async function WorksPage() {
           skills={
             project.skills
               ? project.skills
-                  .map((skill) => typeof skill !== 'number' && skill.skill)
+                  .map((skill) => typeof skill !== 'number' && skill.name)
                   .filter((skill) => skill !== false)
               : []
           }
           projectType={
             project.projectType && typeof project.projectType !== 'number'
-              ? project.projectType.type
+              ? project.projectType.name
               : ''
           }
         />

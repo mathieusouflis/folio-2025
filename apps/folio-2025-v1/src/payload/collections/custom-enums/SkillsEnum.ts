@@ -3,7 +3,7 @@ import type { CollectionConfig } from 'payload'
 export const SkillsEnum: CollectionConfig = {
   slug: 'skills',
   admin: {
-    useAsTitle: 'skill',
+    useAsTitle: 'name',
     group: 'Custom Enums',
   },
   access: {
@@ -11,7 +11,7 @@ export const SkillsEnum: CollectionConfig = {
   },
   fields: [
     {
-      name: 'skill',
+      name: 'name',
       type: 'text',
       required: true,
     },
