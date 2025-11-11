@@ -214,6 +214,7 @@ export interface Project {
   cover: number | Media;
   showreel?: (number | null) | Media;
   title: string;
+  subtitle: string;
   description: string;
   clientName?: string | null;
   clientUrl?: string | null;
@@ -509,6 +510,7 @@ export interface ProjectsSelect<T extends boolean = true> {
   cover?: T;
   showreel?: T;
   title?: T;
+  subtitle?: T;
   description?: T;
   clientName?: T;
   clientUrl?: T;
