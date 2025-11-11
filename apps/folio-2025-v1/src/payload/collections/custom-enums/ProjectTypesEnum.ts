@@ -3,7 +3,7 @@ import type { CollectionConfig } from 'payload'
 export const ProjectTypesEnum: CollectionConfig = {
   slug: 'projectTypes',
   admin: {
-    useAsTitle: 'type',
+    useAsTitle: 'name',
     group: 'Custom Enums',
   },
   access: {
@@ -11,7 +11,7 @@ export const ProjectTypesEnum: CollectionConfig = {
   },
   fields: [
     {
-      name: 'type',
+      name: 'name',
       type: 'text',
       required: true,
     },

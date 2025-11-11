@@ -273,7 +273,7 @@ export interface Project {
  */
 export interface Skill {
   id: number;
-  skill: string;
+  name: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -283,7 +283,7 @@ export interface Skill {
  */
 export interface ProjectType {
   id: number;
-  type: string;
+  name: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -293,7 +293,7 @@ export interface ProjectType {
  */
 export interface Role {
   id: number;
-  roleName: string;
+  name: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -557,7 +557,7 @@ export interface ProjectsSelect<T extends boolean = true> {
  * via the `definition` "roles_select".
  */
 export interface RolesSelect<T extends boolean = true> {
-  roleName?: T;
+  name?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -566,7 +566,7 @@ export interface RolesSelect<T extends boolean = true> {
  * via the `definition` "projectTypes_select".
  */
 export interface ProjectTypesSelect<T extends boolean = true> {
-  type?: T;
+  name?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -575,7 +575,7 @@ export interface ProjectTypesSelect<T extends boolean = true> {
  * via the `definition` "skills_select".
  */
 export interface SkillsSelect<T extends boolean = true> {
-  skill?: T;
+  name?: T;
   updatedAt?: T;
   createdAt?: T;
 }
