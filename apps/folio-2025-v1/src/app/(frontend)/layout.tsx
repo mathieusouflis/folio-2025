@@ -4,6 +4,7 @@ import { MainLayout } from '@/components/layout/Main'
 import localFont from 'next/font/local'
 import { Geist } from 'next/font/google'
 import SmoothScrolling from '@/components/contexts/smooth-scroll'
+import { CursorProvider } from '@/components/contexts/follow-cursor'
 
 export const metadata = {
   description: 'A blank template using Payload in a Next.js app.',
@@ -27,7 +28,9 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
     <html lang="en" className={`${madeMirage.variable} ${geist.variable}`}>
       <body>
         <SmoothScrolling>
-          <MainLayout>{children}</MainLayout>
+          <CursorProvider>
+            <MainLayout>{children}</MainLayout>
+          </CursorProvider>
         </SmoothScrolling>
       </body>
     </html>
