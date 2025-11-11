@@ -22,4 +22,3 @@ export const TextBox = forwardRef<HTMLDivElement, TextBoxProps>(
 )
 
 TextBox.displayName = 'TextBox'
-
