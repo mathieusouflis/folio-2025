@@ -42,7 +42,9 @@ export function ProjectDescriptionSection(params: { project: Project }) {
 
           return (
             <div key={index} className="flex flex-row gap-2">
-              <TP className="font-semibold w-1/12">{firstLetterUppercase(category)}</TP>
+              <TP className="font-semibold text-neutral-500 w-1/12">
+                {firstLetterUppercase(category)}
+              </TP>
               {itemsInCategory}
             </div>
           )
