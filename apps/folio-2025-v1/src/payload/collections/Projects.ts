@@ -22,11 +22,6 @@ export const Projects: CollectionConfig = {
       required: true,
     },
     {
-      type: 'upload',
-      name: 'showreel',
-      relationTo: 'media',
-    },
-    {
       type: 'text',
       name: 'title',
       required: true,
@@ -95,48 +90,36 @@ export const Projects: CollectionConfig = {
     },
     {
       type: 'array',
-      name: 'images',
+      name: 'projectContents',
       fields: [
         {
-          type: 'upload',
-          relationTo: 'media',
-          name: 'image',
-        },
-        {
-          type: 'text',
-          name: 'description',
-        },
-      ],
-    },
-    {
-      type: 'blocks',
-      name: 'projectContent',
-      blocks: [
-        {
-          slug: 'projectSection',
+          type: 'array',
+          name: 'images',
+          maxRows: 3,
           fields: [
             {
-              type: 'text',
-              name: 'title',
+              type: 'upload',
+              name: 'image',
+              relationTo: 'media',
               required: true,
-            },
-            {
-              type: 'richText',
-              name: 'content',
-              required: true,
-            },
-            {
-              type: 'array',
-              name: 'images',
-              fields: [
-                {
-                  type: 'upload',
-                  name: 'image',
-                  relationTo: 'media',
-                },
-              ],
+              admin: {
+                description: 'Recommended sizes: (4/3 | 16/10 | 16/9 | 21/9 | 5/1)',
+              },
             },
           ],
+        },
+        {
+          type: 'select',
+          name: 'display',
+          options: [
+            { label: 'Columns', value: 'columns' },
+            { label: 'Rows', value: 'rows' },
+            { label: 'Grid', value: 'grid' },
+          ],
+        },
+        {
+          type: 'richText',
+          name: 'description',
         },
       ],
     },
