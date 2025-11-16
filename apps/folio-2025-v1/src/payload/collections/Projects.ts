@@ -23,6 +23,10 @@ export const Projects: CollectionConfig = {
     },
     {
       type: 'text',
+      name: 'projectUrl',
+    },
+    {
+      type: 'text',
       name: 'title',
       required: true,
     },
