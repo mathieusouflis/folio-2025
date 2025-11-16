@@ -247,6 +247,7 @@ export interface Project {
   id: number;
   archive: boolean;
   cover: number | Media;
+  projectUrl?: string | null;
   title: string;
   subtitle: string;
   description: string;
@@ -583,6 +584,7 @@ export interface CollaboratorsSelect<T extends boolean = true> {
 export interface ProjectsSelect<T extends boolean = true> {
   archive?: T;
   cover?: T;
+  projectUrl?: T;
   title?: T;
   subtitle?: T;
   description?: T;
