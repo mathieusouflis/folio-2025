@@ -3,6 +3,7 @@ import { TDisplay } from '@/components/typograpgy/display'
 import { LaunchButton } from '../components/launch'
 import { Media } from '@/payload-types'
 import Image from 'next/image'
+import { TP } from '@/components/typograpgy/p'
 
 export function ProjectHeaderSection(params: {
   title: string
@@ -10,11 +11,17 @@ export function ProjectHeaderSection(params: {
 }) {
   return (
     <SectionFullPage className="ml-0 mr-0">
-      <div className="flex flex-col w-full items-center justify-center ml-(--gridMargin) mr-(--gridMargin)">
+      <div className="relative flex flex-col w-full items-center justify-center ml-(--gridMargin) mr-(--gridMargin)">
         <TDisplay className="w-1/2 text-center mix-blend-difference text-white">
           {params.title}
         </TDisplay>
-        <LaunchButton url="absolute bottom-0" className="absolute bottom-9" />
+        <TP className="absolute bottom-1.5 right-0 text-white flex justify-between w-3/12 mix-blend-difference uppercase">
+          (
+          {new Array(4).fill('Scroll').map((scrollText, idx) => {
+            return <span key={idx}>{scrollText}</span>
+          })}
+          )
+        </TP>
       </div>
       {params.showreel && typeof params.showreel === 'object' && (
         <Image
