@@ -14,7 +14,7 @@ export function Footer() {
 
   return (
     <footer className="h-screen flex flex-col mr-(--gridMargin) ml-(--gridMargin)">
-      <span className="flex items-center justify-center h-full w-full mix-blend-difference text-white">
+      <span className="flex items-center justify-center h-full w-full mix-blend-difference text-foreground">
         <Link href={`mailto:contact@${email}`}>
           <Underline active={false} size="sm">
             <TDisplay className="px-3">Work with me !</TDisplay>
