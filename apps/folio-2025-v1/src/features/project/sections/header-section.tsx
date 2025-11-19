@@ -29,7 +29,7 @@ export function ProjectHeaderSection(params: {
           alt={params.showreel?.alt || ''}
           width={params.showreel?.width || 0}
           height={params.showreel?.height || 0}
-          className="absolute pointer-events-none -z-50 top-0 left-0 w-full h-full object-cover"
+          className="absolute pointer-events-none -z-50 top-0 left-0 w-full h-full object-cover brightness-65"
         />
       )}
     </SectionFullPage>
