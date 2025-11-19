@@ -22,13 +22,17 @@ export const Projects: CollectionConfig = {
       required: true,
     },
     {
-      type: 'upload',
-      name: 'showreel',
-      relationTo: 'media',
+      type: 'text',
+      name: 'projectUrl',
     },
     {
       type: 'text',
       name: 'title',
+      required: true,
+    },
+    {
+      type: 'text',
+      name: 'subtitle',
       required: true,
     },
     {
@@ -90,48 +94,60 @@ export const Projects: CollectionConfig = {
     },
     {
       type: 'array',
-      name: 'images',
+      name: 'projectContents',
       fields: [
         {
-          type: 'upload',
-          relationTo: 'media',
-          name: 'image',
-        },
-        {
-          type: 'text',
-          name: 'description',
-        },
-      ],
-    },
-    {
-      type: 'blocks',
-      name: 'projectContent',
-      blocks: [
-        {
-          slug: 'projectSection',
+          type: 'array',
+          name: 'imageGroups',
           fields: [
-            {
-              type: 'text',
-              name: 'title',
-              required: true,
-            },
-            {
-              type: 'richText',
-              name: 'content',
-              required: true,
-            },
             {
               type: 'array',
               name: 'images',
+              maxRows: 3,
+              minRows: 1,
+              required: true,
               fields: [
                 {
                   type: 'upload',
                   name: 'image',
                   relationTo: 'media',
+                  required: true,
+
+                  admin: {
+                    description: 'Recommended sizes: (4/3 | 16/10 | 16/9 | 21/9 | 5/1)',
+                  },
+                },
+                {
+                  type: 'select',
+                  name: 'ratio',
+                  required: true,
+                  defaultValue: '4-3',
+                  options: [
+                    { label: '4/3 (1920 / 1440)', value: '4-3' },
+                    { label: '16/10 (1920 / 1200)', value: '16-10' },
+                    { label: '16/9 (1920 / 1080)', value: '16-9' },
+                    { label: '21/9 (1920 / 822)', value: '21-9' },
+                    { label: '5/1 (1920 / 384)', value: '5-1' },
+                  ],
                 },
               ],
             },
+            {
+              type: 'select',
+              name: 'display',
+              required: true,
+              defaultValue: 'columns',
+              options: [
+                { label: 'Columns', value: 'columns' },
+                { label: 'Rows', value: 'rows' },
+                { label: 'Grid', value: 'grid' },
+              ],
+            },
           ],
+        },
+        {
+          type: 'richText',
+          name: 'description',
         },
       ],
     },

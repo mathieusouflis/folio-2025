@@ -12,7 +12,16 @@ export const metadata = {
 }
 
 const madeMirage = localFont({
-  src: '../../assets/fonts/made-mirage-thin.otf',
+  src: [
+    {
+      path: '../../assets/fonts/made-mirage-thin.otf',
+      weight: '100',
+    },
+    {
+      path: '../../assets/fonts/made-mirage-regular.otf',
+      weight: '400',
+    },
+  ],
   variable: '--font-made-mirage',
 })
 

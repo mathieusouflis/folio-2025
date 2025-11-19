@@ -177,6 +177,48 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    '4/3'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    '16/10'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    '16/9'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    '21/09'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    '5/1'?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -184,18 +226,11 @@ export interface Media {
  */
 export interface Collaborator {
   id: number;
+  avatar?: (number | null) | Media;
   displayName?: string | null;
   folioOwner?: boolean | null;
   firstName: string;
   lastName: string;
-  email?: string | null;
-  socials?:
-    | {
-        platform: 'twitter' | 'linkedin' | 'github' | 'dribble' | 'behance';
-        url: string;
-        id?: string | null;
-      }[]
-    | null;
   relatedProjects?: {
     docs?: (number | Project)[];
     hasNextPage?: boolean;
@@ -212,8 +247,9 @@ export interface Project {
   id: number;
   archive: boolean;
   cover: number | Media;
-  showreel?: (number | null) | Media;
+  projectUrl?: string | null;
   title: string;
+  subtitle: string;
   description: string;
   clientName?: string | null;
   clientUrl?: string | null;
@@ -227,17 +263,23 @@ export interface Project {
         id?: string | null;
       }[]
     | null;
-  images?:
+  projectContents?:
     | {
-        image?: (number | null) | Media;
-        description?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  projectContent?:
-    | {
-        title: string;
-        content: {
+        imageGroups?:
+          | {
+              images: {
+                /**
+                 * Recommended sizes: (4/3 | 16/10 | 16/9 | 21/9 | 5/1)
+                 */
+                image: number | Media;
+                ratio: '4-3' | '16-10' | '16-9' | '21-9' | '5-1';
+                id?: string | null;
+              }[];
+              display: 'columns' | 'rows' | 'grid';
+              id?: string | null;
+            }[]
+          | null;
+        description?: {
           root: {
             type: string;
             children: {
@@ -251,16 +293,8 @@ export interface Project {
             version: number;
           };
           [k: string]: unknown;
-        };
-        images?:
-          | {
-              image?: (number | null) | Media;
-              id?: string | null;
-            }[]
-          | null;
+        } | null;
         id?: string | null;
-        blockName?: string | null;
-        blockType: 'projectSection';
       }[]
     | null;
   updatedAt: string;
@@ -272,7 +306,7 @@ export interface Project {
  */
 export interface Skill {
   id: number;
-  skill: string;
+  name: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -282,7 +316,7 @@ export interface Skill {
  */
 export interface ProjectType {
   id: number;
-  type: string;
+  name: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -292,7 +326,7 @@ export interface ProjectType {
  */
 export interface Role {
   id: number;
-  roleName: string;
+  name: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -478,24 +512,71 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        '4/3'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        '16/10'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        '16/9'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        '21/09'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        '5/1'?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "collaborators_select".
  */
 export interface CollaboratorsSelect<T extends boolean = true> {
+  avatar?: T;
   displayName?: T;
   folioOwner?: T;
   firstName?: T;
   lastName?: T;
-  email?: T;
-  socials?:
-    | T
-    | {
-        platform?: T;
-        url?: T;
-        id?: T;
-      };
   relatedProjects?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -507,8 +588,9 @@ export interface CollaboratorsSelect<T extends boolean = true> {
 export interface ProjectsSelect<T extends boolean = true> {
   archive?: T;
   cover?: T;
-  showreel?: T;
+  projectUrl?: T;
   title?: T;
+  subtitle?: T;
   description?: T;
   clientName?: T;
   clientUrl?: T;
@@ -522,30 +604,24 @@ export interface ProjectsSelect<T extends boolean = true> {
         roles?: T;
         id?: T;
       };
-  images?:
+  projectContents?:
     | T
     | {
-        image?: T;
-        description?: T;
-        id?: T;
-      };
-  projectContent?:
-    | T
-    | {
-        projectSection?:
+        imageGroups?:
           | T
           | {
-              title?: T;
-              content?: T;
               images?:
                 | T
                 | {
                     image?: T;
+                    ratio?: T;
                     id?: T;
                   };
+              display?: T;
               id?: T;
-              blockName?: T;
             };
+        description?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -555,7 +631,7 @@ export interface ProjectsSelect<T extends boolean = true> {
  * via the `definition` "roles_select".
  */
 export interface RolesSelect<T extends boolean = true> {
-  roleName?: T;
+  name?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -564,7 +640,7 @@ export interface RolesSelect<T extends boolean = true> {
  * via the `definition` "projectTypes_select".
  */
 export interface ProjectTypesSelect<T extends boolean = true> {
-  type?: T;
+  name?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -573,7 +649,7 @@ export interface ProjectTypesSelect<T extends boolean = true> {
  * via the `definition` "skills_select".
  */
 export interface SkillsSelect<T extends boolean = true> {
-  skill?: T;
+  name?: T;
   updatedAt?: T;
   createdAt?: T;
 }

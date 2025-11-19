@@ -18,6 +18,11 @@ export const Collaborators: CollectionConfig = {
   },
   fields: [
     {
+      name: 'avatar',
+      type: 'upload',
+      relationTo: 'media',
+    },
+    {
       name: 'displayName',
       type: 'text',
       access: {
@@ -39,34 +44,6 @@ export const Collaborators: CollectionConfig = {
       name: 'lastName',
       type: 'text',
       required: true,
-    },
-
-    {
-      name: 'email',
-      type: 'email',
-    },
-    {
-      name: 'socials',
-      type: 'array',
-      fields: [
-        {
-          name: 'platform',
-          type: 'select',
-          options: [
-            { label: 'Twitter', value: 'twitter' },
-            { label: 'LinkedIn', value: 'linkedin' },
-            { label: 'GitHub', value: 'github' },
-            { label: 'Dribble', value: 'dribble' },
-            { label: 'Behance', value: 'behance' },
-          ],
-          required: true,
-        },
-        {
-          name: 'url',
-          type: 'text',
-          required: true,
-        },
-      ],
     },
     {
       type: 'join',
