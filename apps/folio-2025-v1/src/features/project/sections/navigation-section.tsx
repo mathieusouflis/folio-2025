@@ -2,6 +2,7 @@ import { SectionFullPage } from '@/components/base/section-full-page'
 import { Media, Project } from '@/payload-types'
 import Link from 'next/link'
 import Image from 'next/image'
+import { TP } from '@/components/typograpgy/p'
 
 function Prevarrow() {
   return (
@@ -82,13 +83,17 @@ function ProjectNavigation(props: { type: 'next' | 'prev'; id: number; image: Me
       href={`/projects/${props.id}`}
       className="relative flex items-center justify-center w-full h-full"
     >
-      {props.type === 'next' ? <Nextarrow /> : <Prevarrow />}
+      {props.type === 'next' ? (
+        <TP className="font-made-mirage text-5xl uppercase">Next</TP>
+      ) : (
+        <TP className="font-made-mirage text-5xl uppercase">Previous</TP>
+      )}
       <Image
         src={props.image.url ?? ''}
         alt={props.image.alt}
         width={4000}
         height={4000}
-        className="h-full w-full object-cover absolute top-0 left-0 -z-10 brightness-65"
+        className="h-full w-full object-cover absolute top-0 left-0 -z-10 brightness-55"
       />
     </Link>
   )
@@ -101,7 +106,7 @@ export function ProjectNavigationSection(params: {
   return (
     params.previousProject &&
     params.nextProject && (
-      <SectionFullPage className="h-96">
+      <SectionFullPage className="h-96 mx-0">
         {params.previousProject.id !== params.nextProject.id &&
           typeof params.previousProject.cover !== 'number' && (
             <ProjectNavigation
