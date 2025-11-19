@@ -7,7 +7,7 @@ import type {
 import {
   JSXConvertersFunction,
   LinkJSXConverter,
-  RichText,
+  RichText as RichTextConverter,
 } from '@payloadcms/richtext-lexical/react'
 import React from 'react'
 import { TP } from '../typograpgy/p'
@@ -64,8 +64,8 @@ const jsxConverters: JSXConvertersFunction<DefaultNodeTypes> = ({ defaultConvert
   ...LinkJSXConverter({ internalDocToHref }),
 })
 
-export const MyComponent: React.FC<{
+export const RichText: React.FC<{
   lexicalData: SerializedEditorState<SerializedLexicalNode>
 }> = ({ lexicalData }) => {
-  return <RichText converters={jsxConverters} data={lexicalData} />
+  return <RichTextConverter converters={jsxConverters} data={lexicalData} />
 }
