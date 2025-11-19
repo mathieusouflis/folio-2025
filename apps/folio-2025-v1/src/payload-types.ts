@@ -265,16 +265,20 @@ export interface Project {
     | null;
   projectContents?:
     | {
-        images?:
+        imageGroups?:
           | {
-              /**
-               * Recommended sizes: (4/3 | 16/10 | 16/9 | 21/9 | 5/1)
-               */
-              image: number | Media;
+              images: {
+                /**
+                 * Recommended sizes: (4/3 | 16/10 | 16/9 | 21/9 | 5/1)
+                 */
+                image: number | Media;
+                ratio: '4-3' | '16-10' | '16-9' | '21-9' | '5-1';
+                id?: string | null;
+              }[];
+              display: 'columns' | 'rows' | 'grid';
               id?: string | null;
             }[]
           | null;
-        display?: ('columns' | 'rows' | 'grid') | null;
         description?: {
           root: {
             type: string;
@@ -603,13 +607,19 @@ export interface ProjectsSelect<T extends boolean = true> {
   projectContents?:
     | T
     | {
-        images?:
+        imageGroups?:
           | T
           | {
-              image?: T;
+              images?:
+                | T
+                | {
+                    image?: T;
+                    ratio?: T;
+                    id?: T;
+                  };
+              display?: T;
               id?: T;
             };
-        display?: T;
         description?: T;
         id?: T;
       };

@@ -98,27 +98,51 @@ export const Projects: CollectionConfig = {
       fields: [
         {
           type: 'array',
-          name: 'images',
-          maxRows: 3,
+          name: 'imageGroups',
           fields: [
             {
-              type: 'upload',
-              name: 'image',
-              relationTo: 'media',
+              type: 'array',
+              name: 'images',
+              maxRows: 3,
+              minRows: 1,
               required: true,
-              admin: {
-                description: 'Recommended sizes: (4/3 | 16/10 | 16/9 | 21/9 | 5/1)',
-              },
+              fields: [
+                {
+                  type: 'upload',
+                  name: 'image',
+                  relationTo: 'media',
+                  required: true,
+
+                  admin: {
+                    description: 'Recommended sizes: (4/3 | 16/10 | 16/9 | 21/9 | 5/1)',
+                  },
+                },
+                {
+                  type: 'select',
+                  name: 'ratio',
+                  required: true,
+                  defaultValue: '4-3',
+                  options: [
+                    { label: '4/3 (1920 / 1440)', value: '4-3' },
+                    { label: '16/10 (1920 / 1200)', value: '16-10' },
+                    { label: '16/9 (1920 / 1080)', value: '16-9' },
+                    { label: '21/9 (1920 / 822)', value: '21-9' },
+                    { label: '5/1 (1920 / 384)', value: '5-1' },
+                  ],
+                },
+              ],
             },
-          ],
-        },
-        {
-          type: 'select',
-          name: 'display',
-          options: [
-            { label: 'Columns', value: 'columns' },
-            { label: 'Rows', value: 'rows' },
-            { label: 'Grid', value: 'grid' },
+            {
+              type: 'select',
+              name: 'display',
+              required: true,
+              defaultValue: 'columns',
+              options: [
+                { label: 'Columns', value: 'columns' },
+                { label: 'Rows', value: 'rows' },
+                { label: 'Grid', value: 'grid' },
+              ],
+            },
           ],
         },
         {
