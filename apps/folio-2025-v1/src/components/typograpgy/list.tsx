@@ -30,7 +30,7 @@ export function TListItem({
   ...props
 }: React.PropsWithChildren<React.HTMLAttributes<HTMLLIElement>>) {
   return (
-    <li className={cn(className)} {...props}>
+    <li className={cn('text-sm', className)} {...props}>
       {children}
     </li>
   )
