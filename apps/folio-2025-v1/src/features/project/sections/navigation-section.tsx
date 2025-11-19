@@ -57,7 +57,7 @@ function Nextarrow() {
           rx="74.5833"
           transform="matrix(-1 0 0 1 149.167 0)"
           stroke="white"
-          stroke-width="0.833333"
+          strokeWidth="0.833333"
         />
         <rect
           width="1"
