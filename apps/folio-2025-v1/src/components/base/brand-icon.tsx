@@ -17,9 +17,9 @@ const brandIconVariants = cva('inline-flex items-center justify-center shrink-0'
     variant: {
       default: 'text-current',
       primary: 'text-foreground',
-      secondary: 'text-gray-500',
-      muted: 'text-gray-400',
-      accent: 'text-blue-500',
+      secondary: 'text-muted',
+      muted: 'text-muted/80',
+      accent: 'text-accent',
       success: 'text-green-500',
       warning: 'text-yellow-500',
       danger: 'text-red-500',

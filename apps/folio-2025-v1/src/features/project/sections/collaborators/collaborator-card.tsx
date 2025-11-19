@@ -16,7 +16,7 @@ export function CollaboratorCard(props: {
       </TP>
       <TP
         key="roles"
-        className="text-right text-neutral-500 max-w-[270px] min-w-[188px]"
+        className="text-right text-muted max-w-[270px] min-w-[188px]"
         title={rolesNames.join(' / ')}
       >
         {rolesNames.join(' / ')}

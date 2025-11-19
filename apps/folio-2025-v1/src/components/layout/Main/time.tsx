@@ -18,7 +18,7 @@ export function Time(props: { className?: string }) {
   }, [])
 
   if (!mounted) {
-    return <p className="text-white">&nbsp;</p>
+    return <p className="text-foreground">&nbsp;</p>
   }
 
   return <p className={cn(props.className, 'text-white')}>{currentTime}</p>

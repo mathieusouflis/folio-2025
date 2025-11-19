@@ -8,7 +8,7 @@ export function LaunchButton({ url, className }: { url: string; className?: stri
   return (
     <Link href={url} className={cn('relative w-fit h-fit px-1 py-0.5', className)}>
       <Underline active={false}>
-        <TP className={cn('text-white mix-blend-difference w-max font-medium px-1')}>
+        <TP className={cn('text-white text-[15px] mix-blend-difference w-max font-medium px-1')}>
           Launch Website
         </TP>
       </Underline>

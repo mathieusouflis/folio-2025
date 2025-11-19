@@ -4,6 +4,7 @@ import { MainLayout } from '@/components/layout/Main'
 import localFont from 'next/font/local'
 import { Geist } from 'next/font/google'
 import SmoothScrolling from '@/components/contexts/smooth-scroll'
+import { ThemeProvider } from '@/components/contexts/theme'
 import { CursorProvider } from '@/components/contexts/follow-cursor'
 
 export const metadata = {
@@ -35,11 +36,13 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
 
   return (
     <html lang="en" className={`${madeMirage.variable} ${geist.variable}`}>
-      <body>
+      <body className="antialiased bg-background text-foreground transition-colors duration-200">
         <SmoothScrolling>
-          <CursorProvider>
-            <MainLayout>{children}</MainLayout>
-          </CursorProvider>
+          <ThemeProvider>
+            <CursorProvider>
+              <MainLayout>{children}</MainLayout>
+            </CursorProvider>
+          </ThemeProvider>
         </SmoothScrolling>
       </body>
     </html>

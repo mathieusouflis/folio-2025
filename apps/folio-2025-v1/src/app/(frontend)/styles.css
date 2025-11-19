@@ -3,16 +3,82 @@
 @theme {
   --font-made-mirage: var(--font-made-mirage);
   --font-geist: var(--font-geist);
+
+  --color-background: var(--theme-background);
+  --color-foreground: var(--theme-foreground);
+  --color-muted: var(--theme-muted);
+  --color-border: var(--theme-border);
+  --color-accent: var(--theme-accent);
+  --color-accent-foreground: var(--theme-accent-foreground);
 }
 
 :root {
+  color-scheme: light;
+
   --gridMargin: 120px;
+
+  --theme-background: #ffffff;
+  --theme-foreground: #09090b;
+  --theme-muted: #6b7280;
+  --theme-border: #e5e7eb;
+  --theme-accent: #111827;
+  --theme-accent-foreground: #f9fafb;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --theme-background: #0a0a0c;
+  --theme-foreground: #f7f7f7;
+  --theme-muted: #8f8f8f;
+  --theme-border: #1c1c20;
+  --theme-accent: #f7f7f7;
+  --theme-accent-foreground: #0a0a0c;
 }
 
 * {
   cursor: none;
 }
 
+html {
+  min-height: 100%;
+  font-family:
+    var(--font-geist),
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
 body {
-  background: #fff;
+  min-height: 100%;
+  background-color: var(--theme-background);
+  color: var(--theme-foreground);
+  text-rendering: optimizeLegibility;
+  font-synthesis: none;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--theme-accent) 30%, transparent);
+  color: var(--theme-foreground);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+hr {
+  border-color: var(--theme-border);
+}
+
+.theme-transition {
+  transition:
+    background-color 200ms ease,
+    color 200ms ease,
+    border-color 200ms ease;
 }

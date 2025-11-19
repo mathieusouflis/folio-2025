@@ -130,16 +130,14 @@ export function CollaboratorCard(props: {
         <div className="flex flex-col items-center gap-5">
           <TP
             ref={nameRef}
-            className="w-max font-made-mirage text-5xl text-white font-thin overflow-hidden"
+            className="w-max font-made-mirage text-5xl text-foreground font-thin overflow-hidden"
           >
             {collaboratorName}
           </TP>
 
           {rolesNames.length && (
             <span ref={rolesRef} className="flex flex-row w-max overflow-hidden">
-              <TP className="w-max text-neutral-400 overflow-hidden">
-                ( {rolesNames.join(' / ')} )
-              </TP>
+              <TP className="w-max text-muted overflow-hidden">( {rolesNames.join(' / ')} )</TP>
             </span>
           )}
         </div>
