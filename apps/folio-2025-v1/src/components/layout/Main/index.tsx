@@ -10,10 +10,7 @@ export function MainLayout(props: { children: React.ReactNode }) {
       <FollowCursor />
       <GridPreview />
       <Nav />
-      <main className="flex flex-col">
-        <Time className="fixed left-2 bottom-2 mix-blend-difference" />
-        {props.children}
-      </main>
+      <main className="flex flex-col">{props.children}</main>
       <Footer />
     </>
   )

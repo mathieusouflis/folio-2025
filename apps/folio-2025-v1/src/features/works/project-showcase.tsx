@@ -18,7 +18,6 @@ export function ProjectShowcase(props: {
   projectType: string
 }) {
   const { setCursorActions } = useCursor()
-
   return (
     <Link
       href={`projects/${props.projectId}`}
