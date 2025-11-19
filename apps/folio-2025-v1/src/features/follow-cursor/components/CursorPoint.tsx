@@ -10,4 +10,3 @@ export const CursorPoint = forwardRef<HTMLDivElement, {}>((props, ref) => {
 })
 
 CursorPoint.displayName = 'CursorPoint'
-
