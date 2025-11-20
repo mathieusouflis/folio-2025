@@ -1,7 +1,7 @@
 import React from 'react'
 import { cn } from '@/lib/utils/cn'
 
-export interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
+type GridOwnProps<T extends React.ElementType = 'div'> = {
   /**
    * Whether to apply grid margins (left/right padding)
    * @default true
@@ -23,7 +23,7 @@ export interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
    * HTML element to render as
    * @default 'div'
    */
-  as?: React.ElementType
+  as?: T
 
   /**
    * Enable debug mode to visualize grid
@@ -31,6 +31,9 @@ export interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
    */
   debug?: boolean
 }
+
+export type GridProps<T extends React.ElementType = 'div'> = GridOwnProps<T> &
+  Omit<React.ComponentPropsWithoutRef<T>, keyof GridOwnProps<T>>
 
 /**
  * Grid Container - Main wrapper for pixel-perfect grid layouts
@@ -43,17 +46,18 @@ export interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
  * </Grid>
  * ```
  */
-export function Grid({
+export function Grid<T extends React.ElementType = 'div'>({
   children,
   className,
   withMargins = true,
   withGap = true,
   columns,
-  as: Component = 'div',
+  as,
   debug = false,
   style,
   ...props
-}: GridProps) {
+}: GridProps<T>) {
+  const Component = as || ('div' as React.ElementType)
   const gridStyle = {
     ...style,
     ...(columns && ({ '--grid-columns': columns } as React.CSSProperties)),
@@ -76,7 +80,7 @@ export function Grid({
   )
 }
 
-export interface GridItemProps extends React.HTMLAttributes<HTMLDivElement> {
+type GridItemOwnProps<T extends React.ElementType = 'div'> = {
   /**
    * Number of columns to span (any number based on your grid)
    */
@@ -96,8 +100,11 @@ export interface GridItemProps extends React.HTMLAttributes<HTMLDivElement> {
    * HTML element to render as
    * @default 'div'
    */
-  as?: React.ElementType
+  as?: T
 }
+
+export type GridItemProps<T extends React.ElementType = 'div'> = GridItemOwnProps<T> &
+  Omit<React.ComponentPropsWithoutRef<T>, keyof GridItemOwnProps<T>>
 
 /**
  * Grid Item - Child component for Grid container
@@ -115,17 +122,17 @@ export interface GridItemProps extends React.HTMLAttributes<HTMLDivElement> {
  * <GridItem start={4} end={9}>Content</GridItem>
  * ```
  */
-export function GridItem({
+export function GridItem<T extends React.ElementType = 'div'>({
   children,
   className,
   span,
   start,
   end,
-  as: Component = 'div',
+  as,
   style,
   ...props
-}: GridItemProps) {
-  // Use CSS classes for common values (1-12), inline styles for custom values
+}: GridItemProps<T>) {
+  const Component = as || 'div'
   const useInlineStyles =
     (span && span !== 'full' && span > 12) || (start && start > 12) || (end && end > 13)
 
@@ -139,7 +146,6 @@ export function GridItem({
   return (
     <Component
       className={cn(
-        // Use CSS classes for values 1-12 (better performance)
         !useInlineStyles && span && `grid-span-${span}`,
         !useInlineStyles && start && `grid-col-start-${start}`,
         !useInlineStyles && end && `grid-col-end-${end}`,
@@ -153,7 +159,7 @@ export function GridItem({
   )
 }
 
-export interface GridMarginProps extends React.HTMLAttributes<HTMLDivElement> {
+type GridMarginOwnProps<T extends React.ElementType = 'div'> = {
   /**
    * Which sides to apply grid margins
    * @default 'x' (left and right)
@@ -170,8 +176,11 @@ export interface GridMarginProps extends React.HTMLAttributes<HTMLDivElement> {
    * HTML element to render as
    * @default 'div'
    */
-  as?: React.ElementType
+  as?: T
 }
+
+export type GridMarginProps<T extends React.ElementType = 'div'> = GridMarginOwnProps<T> &
+  Omit<React.ComponentPropsWithoutRef<T>, keyof GridMarginOwnProps<T>>
 
 /**
  * Grid Margin - Apply grid margins to any element
@@ -186,14 +195,15 @@ export interface GridMarginProps extends React.HTMLAttributes<HTMLDivElement> {
  * <GridMargin negative>Full-width content</GridMargin>
  * ```
  */
-export function GridMargin({
+export function GridMargin<T extends React.ElementType = 'div'>({
   children,
   className,
   side = 'x',
   negative = false,
-  as: Component = 'div',
+  as,
   ...props
-}: GridMarginProps) {
+}: GridMarginProps<T>) {
+  const Component = as || 'div'
   return (
     <Component
       className={cn(negative ? 'grid-margin-x-negative' : `grid-margin-${side}`, className)}
