@@ -3,6 +3,7 @@ import { Footer } from './footer'
 import { GridPreview } from './grid-preview'
 import { Nav } from './nav'
 import { Time } from './time'
+import { GridOverlayToggle } from '@/components/ui/grid-overlay-toggle'
 
 export function MainLayout(props: { children: React.ReactNode }) {
   return (
@@ -11,6 +12,7 @@ export function MainLayout(props: { children: React.ReactNode }) {
       <GridPreview />
       <Nav />
       <main className="flex flex-col">{props.children}</main>
+      <GridOverlayToggle className="fixed bottom-2 left-2" />
       <Footer />
     </>
   )
