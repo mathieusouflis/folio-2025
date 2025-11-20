@@ -1,4 +1,4 @@
-import { SectionFullPage } from '@/components/base/section-full-page'
+import { SectionGridFullPage } from '@/components/base/section-full-page'
 import { TH2 } from '@/components/typograpgy/h2'
 import { TP } from '@/components/typograpgy/p'
 import { isDate } from '@/lib/utils/is-date'
@@ -8,7 +8,7 @@ import { LaunchButton } from '../components/launch'
 
 export function ProjectDescriptionSection(params: { project: Project }) {
   return (
-    <SectionFullPage className="flex-col justify-between py-[100px]">
+    <SectionGridFullPage className="flex-col justify-between py-[100px]">
       <div className="flex flex-col gap-10  w-7/12">
         <TH2>{params.project.subtitle}</TH2>
         <TP className="text-base">{params.project.description}</TP>
@@ -53,6 +53,6 @@ export function ProjectDescriptionSection(params: { project: Project }) {
         </div>
         {params.project.projectUrl && <LaunchButton url={params.project.projectUrl} />}
       </div>
-    </SectionFullPage>
+    </SectionGridFullPage>
   )
 }

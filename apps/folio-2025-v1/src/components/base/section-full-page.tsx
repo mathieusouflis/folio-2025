@@ -1,13 +1,12 @@
 import { cn } from '@/lib/utils/cn'
+import { Grid } from '../layout/Grid'
 
-export function SectionFullPage(
+export function SectionGridFullPage(
   props: { children?: React.ReactNode } & React.HTMLAttributes<HTMLDivElement>,
 ) {
   return (
-    <section
-      className={cn('relative h-screen flex ml-(--gridMargin) mr-(--gridMargin)', props.className)}
-    >
+    <Grid as={'section'} className={cn('relative h-screen', props.className)}>
       {props.children}
-    </section>
+    </Grid>
   )
 }

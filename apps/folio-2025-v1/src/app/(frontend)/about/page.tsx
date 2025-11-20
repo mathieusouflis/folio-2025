@@ -1,3 +1,5 @@
-export default async function AboutPage() {
-  return <></>
+import { AboutPage } from '@/features/about'
+
+export default async function Page() {
+  return <AboutPage />
 }

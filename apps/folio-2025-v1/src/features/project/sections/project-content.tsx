@@ -1,17 +1,17 @@
 import { RichText } from '@/components/base/rich-text'
-import { SectionFullPage } from '@/components/base/section-full-page'
+import { SectionGridFullPage } from '@/components/base/section-full-page'
 import { cn } from '@/lib/utils/cn'
 import { Media, Project } from '@/payload-types'
 import Image from 'next/image'
 
 export function ProjectContentSection({ contents }: { contents: Project['projectContents'] }) {
   return (
-    <SectionFullPage className="flex-col h-fit">
+    <SectionGridFullPage className="flex-col h-fit">
       {contents &&
         contents.map((content, index) => {
           return <ProjectContentArticle key={index} content={content} />
         })}
-    </SectionFullPage>
+    </SectionGridFullPage>
   )
 }
 
