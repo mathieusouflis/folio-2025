@@ -106,7 +106,7 @@ export function ProjectNavigationSection(params: {
   return (
     params.previousProject &&
     params.nextProject && (
-      <SectionGridFullPage className="h-96 mx-0">
+      <SectionGridFullPage className="h-96 mx-0 flex-row">
         {params.previousProject.id !== params.nextProject.id &&
           typeof params.previousProject.cover !== 'number' && (
             <ProjectNavigation
