@@ -1,4 +1,4 @@
-import { SectionFullPage } from '@/components/base/section-full-page'
+import { SectionGridFullPage } from '@/components/base/section-full-page'
 import { Media, Project } from '@/payload-types'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -106,7 +106,7 @@ export function ProjectNavigationSection(params: {
   return (
     params.previousProject &&
     params.nextProject && (
-      <SectionFullPage className="h-96 mx-0">
+      <SectionGridFullPage className="h-96 mx-0">
         {params.previousProject.id !== params.nextProject.id &&
           typeof params.previousProject.cover !== 'number' && (
             <ProjectNavigation
@@ -122,7 +122,7 @@ export function ProjectNavigationSection(params: {
             image={params.nextProject.cover}
           />
         )}
-      </SectionFullPage>
+      </SectionGridFullPage>
     )
   )
 }

@@ -1,4 +1,4 @@
-import { SectionFullPage } from '@/components/base/section-full-page'
+import { SectionGridFullPage } from '@/components/base/section-full-page'
 import { Project } from '@/payload-types'
 import { CollaboratorCard } from './collaborator-card-old'
 
@@ -6,7 +6,7 @@ export function ProjectCollaboratorsSectionOld(props: {
   collaborators: Project['collaborators'] | null | undefined
 }) {
   return (
-    <SectionFullPage className="py-24 gap-3 justify-center">
+    <SectionGridFullPage className="py-24 gap-3 justify-center">
       {props.collaborators &&
         props.collaborators.map((item) => {
           if (
@@ -28,6 +28,6 @@ export function ProjectCollaboratorsSectionOld(props: {
             />
           )
         })}
-    </SectionFullPage>
+    </SectionGridFullPage>
   )
 }
