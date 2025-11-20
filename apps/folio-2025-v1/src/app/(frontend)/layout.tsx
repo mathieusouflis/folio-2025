@@ -6,6 +6,7 @@ import { Geist } from 'next/font/google'
 import SmoothScrolling from '@/components/contexts/smooth-scroll'
 import { ThemeProvider } from '@/components/contexts/theme'
 import { CursorProvider } from '@/components/contexts/follow-cursor'
+import { GridOverlayProvider } from '@/components/contexts/grid-overlay'
 
 export const metadata = {
   description: 'A blank template using Payload in a Next.js app.',
@@ -39,9 +40,11 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
       <body className="antialiased bg-background text-foreground transition-colors duration-200">
         <SmoothScrolling>
           <ThemeProvider>
-            <CursorProvider>
-              <MainLayout>{children}</MainLayout>
-            </CursorProvider>
+            <GridOverlayProvider>
+              <CursorProvider>
+                <MainLayout>{children}</MainLayout>
+              </CursorProvider>
+            </GridOverlayProvider>
           </ThemeProvider>
         </SmoothScrolling>
       </body>
