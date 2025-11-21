@@ -97,6 +97,21 @@ type GridItemOwnProps<T extends React.ElementType = 'div'> = {
   end?: number
 
   /**
+   * Number of rows to span
+   */
+  rowSpan?: number | 'full'
+
+  /**
+   * Row to start from
+   */
+  rowStart?: number
+
+  /**
+   * Row to end at
+   */
+  rowEnd?: number
+
+  /**
    * HTML element to render as
    * @default 'div'
    */
@@ -108,7 +123,7 @@ export type GridItemProps<T extends React.ElementType = 'div'> = GridItemOwnProp
 
 /**
  * Grid Item - Child component for Grid container
- * Provides precise control over column positioning
+ * Provides precise control over column and row positioning
  *
  * @example
  * ```tsx
@@ -120,6 +135,15 @@ export type GridItemProps<T extends React.ElementType = 'div'> = GridItemOwnProp
  *
  * // Precise positioning: columns 4-9
  * <GridItem start={4} end={9}>Content</GridItem>
+ *
+ * // Span 2 rows
+ * <GridItem span={6} rowSpan={2}>Content</GridItem>
+ *
+ * // Start at row 2, span 3 rows
+ * <GridItem rowStart={2} rowSpan={3}>Content</GridItem>
+ *
+ * // Complex positioning: columns 2-8, rows 1-3
+ * <GridItem start={2} end={8} rowStart={1} rowEnd={3}>Content</GridItem>
  * ```
  */
 export function GridItem<T extends React.ElementType = 'div'>({
@@ -128,19 +152,32 @@ export function GridItem<T extends React.ElementType = 'div'>({
   span,
   start,
   end,
+  rowSpan,
+  rowStart,
+  rowEnd,
   as,
   style,
   ...props
 }: GridItemProps<T>) {
   const Component = as || 'div'
   const useInlineStyles =
-    (span && span !== 'full' && span > 12) || (start && start > 12) || (end && end > 13)
+    (span && span !== 'full' && span > 12) ||
+    (start && start > 12) ||
+    (end && end > 13) ||
+    (rowSpan && rowSpan !== 'full') ||
+    rowStart ||
+    rowEnd
 
   const gridStyle: React.CSSProperties = {
     ...style,
+    ...(useInlineStyles && span === 'full' && { gridColumn: '1 / -1' }),
     ...(useInlineStyles && span && span !== 'full' && { gridColumn: `span ${span}` }),
     ...(useInlineStyles && start && { gridColumnStart: start }),
     ...(useInlineStyles && end && { gridColumnEnd: end }),
+    ...(useInlineStyles && rowSpan && rowSpan !== 'full' && { gridRow: `span ${rowSpan}` }),
+    ...(useInlineStyles && rowSpan === 'full' && { gridRow: '1 / -1' }),
+    ...(useInlineStyles && rowStart && { gridRowStart: rowStart }),
+    ...(useInlineStyles && rowEnd && { gridRowEnd: rowEnd }),
   }
 
   return (
@@ -149,6 +186,9 @@ export function GridItem<T extends React.ElementType = 'div'>({
         !useInlineStyles && span && `grid-span-${span}`,
         !useInlineStyles && start && `grid-col-start-${start}`,
         !useInlineStyles && end && `grid-col-end-${end}`,
+        !useInlineStyles && rowSpan && `grid-row-span-${rowSpan}`,
+        !useInlineStyles && rowStart && `grid-row-start-${rowStart}`,
+        !useInlineStyles && rowEnd && `grid-row-end-${rowEnd}`,
         className,
       )}
       style={useInlineStyles ? gridStyle : style}
