@@ -15,5 +15,17 @@ export const SkillsEnum: CollectionConfig = {
       type: 'text',
       required: true,
     },
+    {
+      name: 'description',
+      type: 'text',
+      required: true,
+    },
+    {
+      name: 'images',
+      type: 'upload',
+      relationTo: 'media',
+      required: true,
+      hasMany: true,
+    },
   ],
 }
