@@ -143,7 +143,8 @@ export const AboutPage: GlobalConfig = {
               fields: [
                 {
                   name: 'project',
-                  type: 'text',
+                  type: 'relationship',
+                  relationTo: 'projects',
                   required: true,
                 },
                 {
@@ -166,26 +167,10 @@ export const AboutPage: GlobalConfig = {
               maxRows: 4,
             },
             {
-              type: 'array',
+              type: 'relationship',
               name: 'skills',
-              fields: [
-                {
-                  name: 'skillName',
-                  type: 'text',
-                  required: true,
-                },
-                {
-                  name: 'description',
-                  type: 'textarea',
-                  required: true,
-                },
-                {
-                  name: 'images',
-                  type: 'upload',
-                  relationTo: 'media',
-                  required: true,
-                },
-              ],
+              relationTo: 'skills',
+              hasMany: true,
             },
           ],
         },

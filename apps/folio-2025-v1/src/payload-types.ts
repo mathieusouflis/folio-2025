@@ -307,6 +307,8 @@ export interface Project {
 export interface Skill {
   id: number;
   name: string;
+  description: string;
+  images: (number | Media)[];
   updatedAt: string;
   createdAt: string;
 }
@@ -650,6 +652,8 @@ export interface ProjectTypesSelect<T extends boolean = true> {
  */
 export interface SkillsSelect<T extends boolean = true> {
   name?: T;
+  description?: T;
+  images?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -781,21 +785,14 @@ export interface AboutPage {
       | null;
     awwards?:
       | {
-          project: string;
+          project: number | Project;
           awwarder: string;
           mention: string;
           id?: string | null;
         }[]
       | null;
     activities?: (number | Activity)[] | null;
-    skills?:
-      | {
-          skillName: string;
-          description: string;
-          images: number | Media;
-          id?: string | null;
-        }[]
-      | null;
+    skills?: (number | Skill)[] | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -858,14 +855,7 @@ export interface AboutPageSelect<T extends boolean = true> {
               id?: T;
             };
         activities?: T;
-        skills?:
-          | T
-          | {
-              skillName?: T;
-              description?: T;
-              images?: T;
-              id?: T;
-            };
+        skills?: T;
       };
   updatedAt?: T;
   createdAt?: T;
