@@ -6,7 +6,7 @@ export function SectionGridFullPage(
 ) {
   return (
     <Grid as={'section'} className={'relative h-fit'}>
-      <GridItem span={'full'} className={cn('flex flex-col h-screen', props.className)}>
+      <GridItem span={'full'} {...props} className={cn('flex flex-col h-screen', props.className)}>
         {props.children}
       </GridItem>
     </Grid>
