@@ -13,7 +13,6 @@ export function useTextBox(
   },
   displayText: string,
 ): void {
-  // Animate text box position
   useGSAP(() => {
     gsap.to(textBoxRef.current, {
       x,
@@ -23,7 +22,6 @@ export function useTextBox(
     })
   }, [x, y])
 
-  // Animate text box appearance/disappearance
   useGSAP(() => {
     const hasTextOut = cursorActions.new.some((action) => action.type === 'text-out')
     const hadTextOut = cursorActions.old.some((action) => action.type === 'text-out')

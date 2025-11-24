@@ -2,7 +2,6 @@ import { FollowCursor } from '@/features/follow-cursor'
 import { Footer } from './footer'
 import { GridPreview } from './grid-preview'
 import { Nav } from './nav'
-import { Time } from './time'
 import { GridOverlayToggle } from '@/components/ui/grid-overlay-toggle'
 
 export function MainLayout(props: { children: React.ReactNode }) {

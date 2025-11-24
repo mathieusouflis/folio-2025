@@ -1,6 +1,6 @@
 import { forwardRef } from 'react'
 
-export const CursorPoint = forwardRef<HTMLDivElement, {}>((props, ref) => {
+export const CursorPoint = forwardRef<HTMLDivElement>((props, ref) => {
   return (
     <div
       ref={ref}

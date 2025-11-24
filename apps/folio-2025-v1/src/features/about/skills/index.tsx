@@ -65,12 +65,12 @@ function calculateTotalImages(skills: (number | Skill)[]): number {
   return getValidSkills(skills).reduce((sum, skill) => sum + getImageCount(skill), 0)
 }
 
-/**
- * Maps skills to their image counts
- */
-function getImageCountsPerSkill(skills: (number | Skill)[]): number[] {
-  return skills.map((skill) => (typeof skill === 'number' ? 0 : getImageCount(skill)))
-}
+// /**
+//  * Maps skills to their image counts
+//  */
+// function getImageCountsPerSkill(skills: (number | Skill)[]): number[] {
+//   return skills.map((skill) => (typeof skill === 'number' ? 0 : getImageCount(skill)))
+// }
 
 /**
  * Creates enriched skill data with position information
@@ -194,7 +194,7 @@ export function AboutSkills(props: { skills: (number | Skill)[] }) {
 
   const totalImages = useMemo(() => calculateTotalImages(props.skills), [props.skills])
 
-  const imageCountsPerSkill = useMemo(() => getImageCountsPerSkill(props.skills), [props.skills])
+  // const imageCountsPerSkill = useMemo(() => getImageCountsPerSkill(props.skills), [props.skills])
 
   const enrichedSkills = useMemo(() => enrichSkillsWithPositions(props.skills), [props.skills])
 

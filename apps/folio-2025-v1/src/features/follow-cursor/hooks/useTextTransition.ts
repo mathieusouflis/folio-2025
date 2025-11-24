@@ -20,7 +20,6 @@ export function useTextTransition(textContentRef: React.RefObject<HTMLParagraphE
   const nextTextRef = useRef<string | null>(null)
   const animationTimelineRef = useRef<gsap.core.Timeline | null>(null)
 
-  // Cleanup on route change
   useEffect(() => {
     return () => {
       killAllTextAnimations(splitTextRef, animationTimelineRef)
@@ -31,7 +30,6 @@ export function useTextTransition(textContentRef: React.RefObject<HTMLParagraphE
     }
   }, [pathname])
 
-  // Handle text changes
   useEffect(() => {
     const newTextAction = cursorActions.new.find(
       (action) => action.type === 'text-out',
@@ -60,12 +58,7 @@ export function useTextTransition(textContentRef: React.RefObject<HTMLParagraphE
     cleanupSplitText(splitTextRef)
     setDisplayText(newText)
     requestAnimationFrame(() => {
-      animateTextIn(
-        textContentRef,
-        splitTextRef,
-        animationTimelineRef,
-        isTransitioningRef,
-      )
+      animateTextIn(textContentRef, splitTextRef, animationTimelineRef, isTransitioningRef)
     })
   }
 
@@ -83,12 +76,7 @@ export function useTextTransition(textContentRef: React.RefObject<HTMLParagraphE
     }
 
     requestAnimationFrame(() => {
-      animateTextIn(
-        textContentRef,
-        splitTextRef,
-        animationTimelineRef,
-        isTransitioningRef,
-      )
+      animateTextIn(textContentRef, splitTextRef, animationTimelineRef, isTransitioningRef)
     })
   }
 
