@@ -7,318 +7,391 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/all'
 import Image from 'next/image'
-import { useRef } from 'react'
+import { useRef, useMemo } from 'react'
+
+const ANIMATION_CONFIG = {
+  image: {
+    scale: { from: 0, to: 1 },
+    opacity: { from: 0, to: 1000 },
+    scrub: 0.5,
+    ease: 'power2.out',
+  },
+  title: {
+    exit: {
+      y: -20,
+      rotationX: 90,
+      duration: 0.3,
+      stagger: 0.015,
+      ease: 'power2.in',
+    },
+    enter: {
+      y: { from: 20, to: 0 },
+      rotationX: { from: -90, to: 0 },
+      duration: 0.4,
+      stagger: 0.02,
+      ease: 'power2.out',
+    },
+  },
+  progressBar: {
+    heightOffset: 3, // percentage
+  },
+} as const
+
+interface SkillData {
+  skill: Skill
+  imageCount: number
+  startIndex: number
+  endIndex: number
+}
+
+/**
+ * Filters out number IDs and returns only valid Skill objects
+ */
+function getValidSkills(skills: (number | Skill)[]): Skill[] {
+  return skills.filter((skill): skill is Skill => typeof skill !== 'number')
+}
+
+/**
+ * Gets the count of valid images for a skill
+ */
+function getImageCount(skill: Skill): number {
+  return skill.images?.filter((img) => typeof img !== 'number').length ?? 0
+}
+
+/**
+ * Calculates total number of images across all skills
+ */
+function calculateTotalImages(skills: (number | Skill)[]): number {
+  return getValidSkills(skills).reduce((sum, skill) => sum + getImageCount(skill), 0)
+}
+
+/**
+ * Maps skills to their image counts
+ */
+function getImageCountsPerSkill(skills: (number | Skill)[]): number[] {
+  return skills.map((skill) => (typeof skill === 'number' ? 0 : getImageCount(skill)))
+}
+
+/**
+ * Creates enriched skill data with position information
+ */
+function enrichSkillsWithPositions(skills: (number | Skill)[]): SkillData[] {
+  const validSkills = getValidSkills(skills)
+  let cumulativeIndex = 0
+
+  return validSkills
+    .map((skill) => {
+      const imageCount = getImageCount(skill)
+      if (imageCount === 0) return null
+
+      const skillData: SkillData = {
+        skill,
+        imageCount,
+        startIndex: cumulativeIndex,
+        endIndex: cumulativeIndex + imageCount,
+      }
+
+      cumulativeIndex += imageCount
+      return skillData
+    })
+    .filter((data): data is SkillData => data !== null)
+}
+
+/**
+ * Calculates scroll positions in pixels
+ */
+function calculateScrollPositions(startIndex: number, endIndex: number, viewportHeight: number) {
+  return {
+    start: startIndex * viewportHeight,
+    end: endIndex * viewportHeight,
+  }
+}
+
+/**
+ * Creates character spans from text
+ */
+function createCharacterSpans(text: string, visible: boolean = true): HTMLSpanElement[] {
+  const spans: HTMLSpanElement[] = []
+
+  for (let i = 0; i < text.length; i++) {
+    const span = document.createElement('span')
+    span.style.display = 'inline-block'
+    if (!visible) {
+      span.style.opacity = '0'
+    }
+    span.textContent = text[i] || ' '
+    spans.push(span)
+  }
+
+  return spans
+}
+
+/**
+ * Animates text change with character-by-character transition
+ */
+function animateTextTransition(element: HTMLElement, newText: string): void {
+  const currentText = element.textContent || ''
+
+  if (currentText === newText) return
+
+  const existingSpans = Array.from(element.querySelectorAll('span'))
+
+  if (existingSpans.length === 0) {
+    element.textContent = ''
+    element.style.whiteSpace = 'pre'
+
+    const spans = createCharacterSpans(currentText, true)
+    spans.forEach((span) => element.appendChild(span))
+    return
+  }
+
+  const timeline = gsap.timeline()
+  const { exit, enter } = ANIMATION_CONFIG.title
+
+  timeline.to(existingSpans, {
+    opacity: 0,
+    y: exit.y,
+    rotationX: exit.rotationX,
+    duration: exit.duration,
+    stagger: exit.stagger,
+    ease: exit.ease,
+    onComplete: () => {
+      element.textContent = ''
+      element.style.whiteSpace = 'pre'
+
+      const newSpans = createCharacterSpans(newText, false)
+      newSpans.forEach((span) => element.appendChild(span))
+
+      gsap.fromTo(
+        newSpans,
+        {
+          opacity: 0,
+          y: enter.y.from,
+          rotationX: enter.rotationX.from,
+        },
+        {
+          opacity: 1,
+          y: enter.y.to,
+          rotationX: enter.rotationX.to,
+          duration: enter.duration,
+          stagger: enter.stagger,
+          ease: enter.ease,
+        },
+      )
+    },
+  })
+}
 
 export function AboutSkills(props: { skills: (number | Skill)[] }) {
-  const stepsRef = useRef<(HTMLSpanElement | null)[]>([])
-  const imagesRef = useRef<(HTMLImageElement | null)[][]>([])
-  const imagesContainerRef = useRef<(HTMLDivElement | null)[][]>([])
-  const mainContainersRef = useRef<(HTMLDivElement | null)[]>([])
-  const titleRef = useRef<HTMLHeadingElement>(null)
-  const titleContainersRef = useRef<(HTMLDivElement | null)[]>([])
-
-  const imagesCount = props.skills
-    .filter((skill) => typeof skill !== 'number')
-    .reduce((sum, skill) => sum + (skill.images?.length ?? 0), 0)
-
   gsap.registerPlugin(ScrollTrigger)
 
+  const progressBarRefs = useRef<(HTMLSpanElement | null)[]>([])
+  const imageRefs = useRef<(HTMLImageElement | null)[][]>([])
+  const imageContainerRefs = useRef<(HTMLDivElement | null)[][]>([])
+  const skillContainerRefs = useRef<(HTMLDivElement | null)[]>([])
+  const skillContentRefs = useRef<(HTMLDivElement | null)[]>([])
+  const titleRef = useRef<HTMLHeadingElement>(null)
+
+  const totalImages = useMemo(() => calculateTotalImages(props.skills), [props.skills])
+
+  const imageCountsPerSkill = useMemo(() => getImageCountsPerSkill(props.skills), [props.skills])
+
+  const enrichedSkills = useMemo(() => enrichSkillsWithPositions(props.skills), [props.skills])
+
+  const validSkills = useMemo(() => getValidSkills(props.skills), [props.skills])
+
+  const firstSkillName = validSkills[0]?.name ?? ''
+
   useGSAP(() => {
-    const createdTriggers: ScrollTrigger[] = []
+    if (typeof window === 'undefined') return
 
-    const imagesPerSkill = props.skills.map((skill) =>
-      typeof skill === 'number'
-        ? 0
-        : (skill.images?.filter((img) => typeof img !== 'number').length ?? 0),
-    )
+    const triggers: ScrollTrigger[] = []
+    const vh = window.innerHeight
 
-    if (typeof window !== 'undefined') {
-      const vh = window.innerHeight
+    enrichedSkills.forEach((skillData, index) => {
+      const progressBar = progressBarRefs.current[index]
+      if (!progressBar) return
 
-      let cumulative = 0
-      imagesPerSkill.forEach((count, idx) => {
-        const ref = stepsRef.current[idx]
-        if (!ref || count === 0) {
-          cumulative += count
+      const { start, end } = calculateScrollPositions(skillData.startIndex, skillData.endIndex, vh)
+
+      const trigger = gsap.fromTo(
+        progressBar,
+        { height: '0%' },
+        {
+          scrollTrigger: {
+            trigger: skillContainerRefs.current[index],
+            start: `${start}px center`,
+            end: `${end}px bottom`,
+            onUpdate: (self) => {
+              const progress = Math.max(0, Math.min(1, self.progress))
+              progressBar.style.height = `${progress * 100 + ANIMATION_CONFIG.progressBar.heightOffset}%`
+            },
+          },
+        },
+      )
+
+      if (trigger.scrollTrigger) {
+        triggers.push(trigger.scrollTrigger)
+      }
+    })
+
+    let globalImageIndex = 0
+
+    imageRefs.current.forEach((imageSet, skillIndex) => {
+      if (!imageSet || imageSet.length === 0) return
+
+      imageSet.forEach((img) => {
+        if (!img) {
+          globalImageIndex++
           return
         }
 
-        const startPx = cumulative * vh
-        const endPx = (cumulative + count) * vh
+        gsap.set(img, { transformOrigin: 'center center' })
 
-        const trigger = gsap.fromTo(
-          ref,
-          { height: '0%' },
+        const { start, end } = calculateScrollPositions(globalImageIndex, globalImageIndex + 1, vh)
+
+        const tween = gsap.fromTo(
+          img,
           {
+            scale: ANIMATION_CONFIG.image.scale.from,
+            autoAlpha: ANIMATION_CONFIG.image.opacity.from,
+          },
+          {
+            scale: ANIMATION_CONFIG.image.scale.to,
+            autoAlpha: ANIMATION_CONFIG.image.opacity.to,
+            ease: ANIMATION_CONFIG.image.ease,
             scrollTrigger: {
-              trigger: mainContainersRef.current[idx],
-              start: `${startPx}px center`,
-              end: `${endPx}px bottom`,
-              markers: true,
-              onUpdate: (self) => {
-                const p = Math.max(0, Math.min(1, self.progress))
-                ref.style.height = `${p * 100 + 3}%`
-              },
+              trigger: skillContainerRefs.current[skillIndex],
+              start: `${start}px center`,
+              end: `${end}px center`,
+              scrub: ANIMATION_CONFIG.image.scrub,
             },
           },
         )
 
-        if (trigger.scrollTrigger) {
-          createdTriggers.push(trigger.scrollTrigger)
+        if (tween.scrollTrigger) {
+          triggers.push(tween.scrollTrigger)
         }
-        cumulative += count
+
+        globalImageIndex++
       })
-    }
+    })
 
-    if (typeof window !== 'undefined') {
-      const vh = window.innerHeight
-      let globalIndex = 0
-
-      for (let skillIndex = 0; skillIndex < imagesRef.current.length; skillIndex++) {
-        const imageSet = imagesRef.current[skillIndex]
-        if (!imageSet || imageSet.length === 0) {
-          continue
-        }
-
-        for (let imageIndex = 0; imageIndex < imageSet.length; imageIndex++) {
-          const img = imageSet[imageIndex]
-          if (!img) {
-            globalIndex += 1
-            continue
-          }
-          gsap.set(img, { transformOrigin: 'center center' })
-
-          const startPx = globalIndex * vh
-          const endPx = (globalIndex + 1) * vh
-
-          const tween = gsap.fromTo(
-            img,
-            {
-              scale: 0,
-              autoAlpha: 0,
-            },
-            {
-              scale: 1,
-              autoAlpha: 1000,
-              ease: 'power2.out',
-              scrollTrigger: {
-                trigger: mainContainersRef.current[skillIndex],
-                start: `${startPx}px center`,
-                end: `${endPx}px center`,
-                scrub: 0.5,
-              },
-            },
-          )
-
-          if (tween.scrollTrigger) {
-            createdTriggers.push(tween.scrollTrigger)
-          }
-
-          globalIndex += 1
-        }
-      }
-    }
-
-    // Set title containers to be visible (no fade animations)
-    if (typeof window !== 'undefined') {
-      titleContainersRef.current.forEach((container) => {
-        if (!container) return
+    skillContentRefs.current.forEach((container) => {
+      if (container) {
         gsap.set(container, { autoAlpha: 1 })
-      })
-    }
+      }
+    })
 
-    // Dynamic title text animation
-    if (typeof window !== 'undefined' && titleRef.current) {
-      const vh = window.innerHeight
-      let cumulative = 0
-
-      const skillsWithImages = props.skills.filter((skill) => {
-        if (typeof skill === 'number') return false
-        const imageCount = skill.images?.filter((img) => typeof img !== 'number').length ?? 0
-        return imageCount > 0
-      }) as Skill[]
-
-      skillsWithImages.forEach((skill, idx) => {
-        const imageCount = skill.images?.filter((img) => typeof img !== 'number').length ?? 0
-        const startPx = cumulative * vh
-        const nextStartPx = (cumulative + imageCount) * vh
-        const transitionStartPx = nextStartPx - vh * 0.5
+    if (titleRef.current) {
+      enrichedSkills.forEach((skillData, index) => {
+        const { start, end } = calculateScrollPositions(
+          skillData.startIndex,
+          skillData.endIndex,
+          vh,
+        )
 
         const trigger = ScrollTrigger.create({
-          trigger: mainContainersRef.current[idx],
-          start: `${startPx}px center`,
-          end: `${nextStartPx}px center`,
+          trigger: skillContainerRefs.current[index],
+          start: `${start}px center`,
+          end: `${end}px center`,
           onEnter: () => {
             if (titleRef.current) {
-              animateTextChange(titleRef.current, skill.name ?? '')
+              animateTextTransition(titleRef.current, skillData.skill.name ?? '')
             }
           },
           onEnterBack: () => {
             if (titleRef.current) {
-              animateTextChange(titleRef.current, skill.name ?? '')
+              animateTextTransition(titleRef.current, skillData.skill.name ?? '')
             }
           },
         })
 
-        createdTriggers.push(trigger)
-        cumulative += imageCount
+        triggers.push(trigger)
       })
     }
 
     ScrollTrigger.refresh()
 
     return () => {
-      createdTriggers.forEach((trigger) => trigger.kill())
+      triggers.forEach((trigger) => trigger.kill())
     }
-  }, [])
-
-  const animateTextChange = (element: HTMLElement, newText: string) => {
-    const currentText = element.textContent || ''
-
-    if (currentText === newText) return
-
-    // Get existing spans or create from current text
-    let existingSpans = Array.from(element.querySelectorAll('span'))
-
-    if (existingSpans.length === 0) {
-      // First time: create spans from current text without animation
-      element.textContent = ''
-      element.style.whiteSpace = 'pre'
-
-      for (let i = 0; i < currentText.length; i++) {
-        const span = document.createElement('span')
-        span.style.display = 'inline-block'
-        span.textContent = currentText[i] || ' '
-        element.appendChild(span)
-      }
-      existingSpans = Array.from(element.querySelectorAll('span'))
-    }
-
-    // Animate out old text
-    const timeline = gsap.timeline()
-
-    timeline.to(existingSpans, {
-      opacity: 0,
-      y: -20,
-      rotationX: 90,
-      duration: 0.3,
-      stagger: 0.015,
-      ease: 'power2.in',
-      onComplete: () => {
-        // Clear and create new spans
-        element.textContent = ''
-        element.style.whiteSpace = 'pre'
-
-        const newSpans: HTMLSpanElement[] = []
-        for (let i = 0; i < newText.length; i++) {
-          const span = document.createElement('span')
-          span.style.display = 'inline-block'
-          span.style.opacity = '0'
-          span.textContent = newText[i] || ' '
-          element.appendChild(span)
-          newSpans.push(span)
-        }
-
-        // Animate in new text
-        gsap.fromTo(
-          newSpans,
-          {
-            opacity: 0,
-            y: 20,
-            rotationX: -90,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            rotationX: 0,
-            duration: 0.4,
-            stagger: 0.02,
-            ease: 'power2.out',
-          },
-        )
-      },
-    })
-  }
+  }, [enrichedSkills])
 
   return (
     <SectionGridFullPage
       className="relative scroll-section"
       style={{
-        height: `${imagesCount * 100}vh`,
+        height: `${totalImages * 100}vh`,
       }}
     >
       <div className="absolute -right-6 flex flex-col h-full">
-        <div className="flex flex-col justify-center sticky top-0 gap-1 5 min-h-screen">
-          {props.skills.map((skill, idx) => {
-            if (typeof skill !== 'number') {
-              return (
-                <span key={idx} className="relative h-3 w-3 border border-white">
-                  <span
-                    ref={(el) => {
-                      stepsRef.current[idx] = el
-                    }}
-                    className="absolute top-0 left-0 w-full h-0 bg-white"
-                  ></span>
-                </span>
-              )
-            }
-            return null
-          })}
+        <div className="flex flex-col justify-center sticky top-0 gap-1.5 min-h-screen">
+          {validSkills.map((skill, index) => (
+            <span key={index} className="relative h-3 w-3 border border-white">
+              <span
+                ref={(el) => {
+                  progressBarRefs.current[index] = el
+                }}
+                className="absolute top-0 left-0 w-full h-0 bg-white"
+              />
+            </span>
+          ))}
         </div>
       </div>
 
-      {/* Single title container that changes dynamically */}
-
-      {props.skills.map((skill, skillIndex) => {
-        if (typeof skill === 'number') return null
-        return (
+      {validSkills.map((skill, skillIndex) => (
+        <div
+          key={`skill-${skillIndex}`}
+          ref={(el) => {
+            skillContainerRefs.current[skillIndex] = el
+          }}
+          className="absolute top-0 left-0 w-full h-full"
+        >
           <div
             ref={(el) => {
-              mainContainersRef.current[skillIndex] = el
+              skillContentRefs.current[skillIndex] = el
             }}
-            key={`skill-${skillIndex}`}
-            className="absolute top-0 left-0 w-full h-full"
+            className="sticky top-0 left-0 h-screen w-full"
           >
-            <div
-              ref={(el) => {
-                titleContainersRef.current[skillIndex] = el
-              }}
-              className="sticky top-0 left-0 h-screen w-full"
-            >
-              {(skill.images ?? []).map((image, imageIndex) => {
-                if (typeof image === 'number') return null
-                return (
-                  <div
-                    key={`${skillIndex}-${imageIndex}`}
+            {(skill.images ?? []).map((image, imageIndex) => {
+              if (typeof image === 'number') return null
+
+              return (
+                <div
+                  key={`${skillIndex}-${imageIndex}`}
+                  ref={(el) => {
+                    if (!imageContainerRefs.current[skillIndex]) {
+                      imageContainerRefs.current[skillIndex] = []
+                    }
+                    imageContainerRefs.current[skillIndex][imageIndex] = el
+                  }}
+                  className="absolute top-1/2 -translate-y-1/2 flex justify-center items-center w-full aspect-video"
+                >
+                  <Image
                     ref={(el) => {
-                      if (!imagesContainerRef.current[skillIndex])
-                        imagesContainerRef.current[skillIndex] = []
-                      imagesContainerRef.current[skillIndex][imageIndex] = el
+                      if (!imageRefs.current[skillIndex]) {
+                        imageRefs.current[skillIndex] = []
+                      }
+                      imageRefs.current[skillIndex][imageIndex] = el
                     }}
-                    className="absolute top-1/2 -translate-y-1/2 flex justify-center items-center w-full aspect-video"
-                  >
-                    <Image
-                      ref={(el) => {
-                        if (!imagesRef.current[skillIndex]) imagesRef.current[skillIndex] = []
-                        imagesRef.current[skillIndex][imageIndex] = el
-                      }}
-                      src={image.url ?? ''}
-                      alt={image.alt}
-                      width={4000}
-                      height={4000}
-                      className="absolute top-0 left-0 aspect-video object-cover w-full brightness-50"
-                    />
-                  </div>
-                )
-              })}
-            </div>
+                    src={image.url ?? ''}
+                    alt={image.alt}
+                    width={4000}
+                    height={4000}
+                    className="absolute top-0 left-0 aspect-video object-cover w-full brightness-50"
+                  />
+                </div>
+              )
+            })}
           </div>
-        )
-      })}
+        </div>
+      ))}
+
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
         <div className="sticky top-0 left-0 h-screen w-full flex items-center justify-center">
           <TDisplay ref={titleRef} className="w-full text-center">
-            {props.skills[0] && typeof props.skills[0] !== 'number' ? props.skills[0].name : ''}
+            {firstSkillName}
           </TDisplay>
         </div>
       </div>
