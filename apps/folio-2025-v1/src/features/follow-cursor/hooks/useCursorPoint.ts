@@ -2,11 +2,7 @@ import { useGSAP } from '@gsap/react'
 import { RefObject } from 'react'
 import { gsap } from 'gsap'
 import { calculatePosition } from '../utils/calculations'
-import {
-  ANIMATION_DURATIONS,
-  ANIMATION_EASING,
-  CURSOR_SIZES,
-} from '../constants'
+import { ANIMATION_DURATIONS, ANIMATION_EASING, CURSOR_SIZES } from '../constants'
 
 export function useCursorPoint(
   pointRef: RefObject<HTMLDivElement | null>,
@@ -18,7 +14,6 @@ export function useCursorPoint(
     new: Array<{ type: string }>
   },
 ): void {
-  // Animate point position
   useGSAP(() => {
     if (!pointRef.current || !isVisible) return
 
@@ -31,7 +26,6 @@ export function useCursorPoint(
     })
   }, [x, y, isVisible])
 
-  // Animate point size on hover
   useGSAP(() => {
     const hasHover = cursorActions.new.some((action) => action.type === 'hover')
     const hadHover = cursorActions.old.some((action) => action.type === 'hover')
@@ -54,4 +48,3 @@ export function useCursorPoint(
     }
   }, [cursorActions])
 }
-

@@ -1,6 +1,5 @@
 import { SectionGridFullPage } from '@/components/base/section-full-page'
 import { TDisplay } from '@/components/typograpgy/display'
-import { LaunchButton } from '../components/launch'
 import { Media } from '@/payload-types'
 import Image from 'next/image'
 import { TP } from '@/components/typograpgy/p'

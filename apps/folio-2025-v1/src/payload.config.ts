@@ -46,9 +46,9 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString:
-        process.env.NODE_ENV === 'production'
-          ? process.env.DATABASE_URI
-          : process.env.DATABASE_DEV_URI,
+        process.env.DATABASE_URI ||
+        process.env.DATABASE_DEV_URI ||
+        'postgresql://localhost:5432/payload',
     },
   }),
   localization: {

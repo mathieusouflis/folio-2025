@@ -18,19 +18,20 @@ import {
   serial,
   numeric,
   boolean,
-  text,
   jsonb,
+  text,
   pgEnum,
 } from '@payloadcms/db-postgres/drizzle/pg-core'
 import { sql, relations } from '@payloadcms/db-postgres/drizzle'
 export const enum__locales = pgEnum('enum__locales', ['en', 'fr'])
-export const enum_collaborators_socials_platform = pgEnum('enum_collaborators_socials_platform', [
-  'twitter',
-  'linkedin',
-  'github',
-  'dribble',
-  'behance',
-])
+export const enum_projects_project_contents_image_groups_images_ratio = pgEnum(
+  'enum_projects_project_contents_image_groups_images_ratio',
+  ['4-3', '16-10', '16-9', '21-9', '5-1'],
+)
+export const enum_projects_project_contents_image_groups_display = pgEnum(
+  'enum_projects_project_contents_image_groups_display',
+  ['columns', 'rows', 'grid'],
+)
 
 export const users_sessions = pgTable(
   'users_sessions',
@@ -105,31 +106,46 @@ export const media = pgTable(
     height: numeric('height', { mode: 'number' }),
     focalX: numeric('focal_x', { mode: 'number' }),
     focalY: numeric('focal_y', { mode: 'number' }),
+    'sizes_4/3_url': varchar('sizes_4_3_url'),
+    'sizes_4/3_width': numeric('sizes_4_3_width', { mode: 'number' }),
+    'sizes_4/3_height': numeric('sizes_4_3_height', { mode: 'number' }),
+    'sizes_4/3_mimeType': varchar('sizes_4_3_mime_type'),
+    'sizes_4/3_filesize': numeric('sizes_4_3_filesize', { mode: 'number' }),
+    'sizes_4/3_filename': varchar('sizes_4_3_filename'),
+    'sizes_16/10_url': varchar('sizes_16_10_url'),
+    'sizes_16/10_width': numeric('sizes_16_10_width', { mode: 'number' }),
+    'sizes_16/10_height': numeric('sizes_16_10_height', { mode: 'number' }),
+    'sizes_16/10_mimeType': varchar('sizes_16_10_mime_type'),
+    'sizes_16/10_filesize': numeric('sizes_16_10_filesize', { mode: 'number' }),
+    'sizes_16/10_filename': varchar('sizes_16_10_filename'),
+    'sizes_16/9_url': varchar('sizes_16_9_url'),
+    'sizes_16/9_width': numeric('sizes_16_9_width', { mode: 'number' }),
+    'sizes_16/9_height': numeric('sizes_16_9_height', { mode: 'number' }),
+    'sizes_16/9_mimeType': varchar('sizes_16_9_mime_type'),
+    'sizes_16/9_filesize': numeric('sizes_16_9_filesize', { mode: 'number' }),
+    'sizes_16/9_filename': varchar('sizes_16_9_filename'),
+    'sizes_21/09_url': varchar('sizes_21_09_url'),
+    'sizes_21/09_width': numeric('sizes_21_09_width', { mode: 'number' }),
+    'sizes_21/09_height': numeric('sizes_21_09_height', { mode: 'number' }),
+    'sizes_21/09_mimeType': varchar('sizes_21_09_mime_type'),
+    'sizes_21/09_filesize': numeric('sizes_21_09_filesize', { mode: 'number' }),
+    'sizes_21/09_filename': varchar('sizes_21_09_filename'),
+    'sizes_5/1_url': varchar('sizes_5_1_url'),
+    'sizes_5/1_width': numeric('sizes_5_1_width', { mode: 'number' }),
+    'sizes_5/1_height': numeric('sizes_5_1_height', { mode: 'number' }),
+    'sizes_5/1_mimeType': varchar('sizes_5_1_mime_type'),
+    'sizes_5/1_filesize': numeric('sizes_5_1_filesize', { mode: 'number' }),
+    'sizes_5/1_filename': varchar('sizes_5_1_filename'),
   },
   (columns) => [
     index('media_updated_at_idx').on(columns.updatedAt),
     index('media_created_at_idx').on(columns.createdAt),
     uniqueIndex('media_filename_idx').on(columns.filename),
-  ],
-)
-
-export const collaborators_socials = pgTable(
-  'collaborators_socials',
-  {
-    _order: integer('_order').notNull(),
-    _parentID: integer('_parent_id').notNull(),
-    id: varchar('id').primaryKey(),
-    platform: enum_collaborators_socials_platform('platform').notNull(),
-    url: varchar('url').notNull(),
-  },
-  (columns) => [
-    index('collaborators_socials_order_idx').on(columns._order),
-    index('collaborators_socials_parent_id_idx').on(columns._parentID),
-    foreignKey({
-      columns: [columns['_parentID']],
-      foreignColumns: [collaborators.id],
-      name: 'collaborators_socials_parent_id_fk',
-    }).onDelete('cascade'),
+    index('media_sizes_4_3_sizes_4_3_filename_idx').on(columns['sizes_4/3_filename']),
+    index('media_sizes_16_10_sizes_16_10_filename_idx').on(columns['sizes_16/10_filename']),
+    index('media_sizes_16_9_sizes_16_9_filename_idx').on(columns['sizes_16/9_filename']),
+    index('media_sizes_21_09_sizes_21_09_filename_idx').on(columns['sizes_21/09_filename']),
+    index('media_sizes_5_1_sizes_5_1_filename_idx').on(columns['sizes_5/1_filename']),
   ],
 )
 
@@ -137,11 +153,13 @@ export const collaborators = pgTable(
   'collaborators',
   {
     id: serial('id').primaryKey(),
+    avatar: integer('avatar_id').references(() => media.id, {
+      onDelete: 'set null',
+    }),
     displayName: varchar('display_name'),
     folioOwner: boolean('folio_owner'),
     firstName: varchar('first_name').notNull(),
     lastName: varchar('last_name').notNull(),
-    email: varchar('email'),
     updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 })
       .defaultNow()
       .notNull(),
@@ -150,6 +168,7 @@ export const collaborators = pgTable(
       .notNull(),
   },
   (columns) => [
+    index('collaborators_avatar_idx').on(columns.avatar),
     index('collaborators_updated_at_idx').on(columns.updatedAt),
     index('collaborators_created_at_idx').on(columns.createdAt),
   ],
@@ -177,70 +196,69 @@ export const projects_collaborators = pgTable(
   ],
 )
 
-export const projects_images = pgTable(
-  'projects_images',
-  {
-    _order: integer('_order').notNull(),
-    _parentID: integer('_parent_id').notNull(),
-    id: varchar('id').primaryKey(),
-    image: integer('image_id').references(() => media.id, {
-      onDelete: 'set null',
-    }),
-    description: varchar('description'),
-  },
-  (columns) => [
-    index('projects_images_order_idx').on(columns._order),
-    index('projects_images_parent_id_idx').on(columns._parentID),
-    index('projects_images_image_idx').on(columns.image),
-    foreignKey({
-      columns: [columns['_parentID']],
-      foreignColumns: [projects.id],
-      name: 'projects_images_parent_id_fk',
-    }).onDelete('cascade'),
-  ],
-)
-
-export const projects_blocks_project_section_images = pgTable(
-  'projects_blocks_project_section_images',
+export const projects_project_contents_image_groups_images = pgTable(
+  'projects_project_contents_image_groups_images',
   {
     _order: integer('_order').notNull(),
     _parentID: varchar('_parent_id').notNull(),
     id: varchar('id').primaryKey(),
-    image: integer('image_id').references(() => media.id, {
-      onDelete: 'set null',
-    }),
+    image: integer('image_id')
+      .notNull()
+      .references(() => media.id, {
+        onDelete: 'set null',
+      }),
+    ratio: enum_projects_project_contents_image_groups_images_ratio('ratio')
+      .notNull()
+      .default('4-3'),
   },
   (columns) => [
-    index('projects_blocks_project_section_images_order_idx').on(columns._order),
-    index('projects_blocks_project_section_images_parent_id_idx').on(columns._parentID),
-    index('projects_blocks_project_section_images_image_idx').on(columns.image),
+    index('projects_project_contents_image_groups_images_order_idx').on(columns._order),
+    index('projects_project_contents_image_groups_images_parent_id_idx').on(columns._parentID),
+    index('projects_project_contents_image_groups_images_image_idx').on(columns.image),
     foreignKey({
       columns: [columns['_parentID']],
-      foreignColumns: [projects_blocks_project_section.id],
-      name: 'projects_blocks_project_section_images_parent_id_fk',
+      foreignColumns: [projects_project_contents_image_groups.id],
+      name: 'projects_project_contents_image_groups_images_parent_id_fk',
     }).onDelete('cascade'),
   ],
 )
 
-export const projects_blocks_project_section = pgTable(
-  'projects_blocks_project_section',
+export const projects_project_contents_image_groups = pgTable(
+  'projects_project_contents_image_groups',
+  {
+    _order: integer('_order').notNull(),
+    _parentID: varchar('_parent_id').notNull(),
+    id: varchar('id').primaryKey(),
+    display: enum_projects_project_contents_image_groups_display('display')
+      .notNull()
+      .default('columns'),
+  },
+  (columns) => [
+    index('projects_project_contents_image_groups_order_idx').on(columns._order),
+    index('projects_project_contents_image_groups_parent_id_idx').on(columns._parentID),
+    foreignKey({
+      columns: [columns['_parentID']],
+      foreignColumns: [projects_project_contents.id],
+      name: 'projects_project_contents_image_groups_parent_id_fk',
+    }).onDelete('cascade'),
+  ],
+)
+
+export const projects_project_contents = pgTable(
+  'projects_project_contents',
   {
     _order: integer('_order').notNull(),
     _parentID: integer('_parent_id').notNull(),
-    _path: text('_path').notNull(),
     id: varchar('id').primaryKey(),
-    title: varchar('title').notNull(),
-    content: jsonb('content').notNull(),
-    blockName: varchar('block_name'),
+    description: jsonb('description'),
   },
   (columns) => [
-    index('projects_blocks_project_section_order_idx').on(columns._order),
-    index('projects_blocks_project_section_parent_id_idx').on(columns._parentID),
-    index('projects_blocks_project_section_path_idx').on(columns._path),
+    index('projects_project_contents_order_idx').on(columns._order),
+    index('projects_project_contents_parent_id_idx').on(columns._parentID),
     foreignKey({
       columns: [columns['_parentID']],
       foreignColumns: [projects.id],
-      name: 'projects_blocks_project_section_parent_id_fk',
+      name: 'projects_project_contents_parent_id_fk',
     }).onDelete('cascade'),
   ],
 )
@@ -255,10 +273,9 @@ export const projects = pgTable(
       .references(() => media.id, {
         onDelete: 'set null',
       }),
-    showreel: integer('showreel_id').references(() => media.id, {
-      onDelete: 'set null',
-    }),
+    projectUrl: varchar('project_url'),
     title: varchar('title').notNull(),
+    subtitle: varchar('subtitle').notNull(),
     description: varchar('description').notNull(),
     clientName: varchar('client_name'),
     clientUrl: varchar('client_url'),
@@ -275,7 +292,6 @@ export const projects = pgTable(
   },
   (columns) => [
     index('projects_cover_idx').on(columns.cover),
-    index('projects_showreel_idx').on(columns.showreel),
     index('projects_project_type_idx').on(columns.projectType),
     index('projects_updated_at_idx').on(columns.updatedAt),
     index('projects_created_at_idx').on(columns.createdAt),
@@ -320,7 +336,7 @@ export const roles = pgTable(
   'roles',
   {
     id: serial('id').primaryKey(),
-    roleName: varchar('role_name').notNull(),
+    name: varchar('name').notNull(),
     updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 })
       .defaultNow()
       .notNull(),
@@ -338,7 +354,7 @@ export const project_types = pgTable(
   'project_types',
   {
     id: serial('id').primaryKey(),
-    type: varchar('type').notNull(),
+    name: varchar('name').notNull(),
     updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 })
       .defaultNow()
       .notNull(),
@@ -356,7 +372,8 @@ export const skills = pgTable(
   'skills',
   {
     id: serial('id').primaryKey(),
-    skill: varchar('skill').notNull(),
+    name: varchar('name').notNull(),
+    description: varchar('description').notNull(),
     updatedAt: timestamp('updated_at', { mode: 'string', withTimezone: true, precision: 3 })
       .defaultNow()
       .notNull(),
@@ -370,6 +387,33 @@ export const skills = pgTable(
   ],
 )
 
+export const skills_rels = pgTable(
+  'skills_rels',
+  {
+    id: serial('id').primaryKey(),
+    order: integer('order'),
+    parent: integer('parent_id').notNull(),
+    path: varchar('path').notNull(),
+    mediaID: integer('media_id'),
+  },
+  (columns) => [
+    index('skills_rels_order_idx').on(columns.order),
+    index('skills_rels_parent_idx').on(columns.parent),
+    index('skills_rels_path_idx').on(columns.path),
+    index('skills_rels_media_id_idx').on(columns.mediaID),
+    foreignKey({
+      columns: [columns['parent']],
+      foreignColumns: [skills.id],
+      name: 'skills_rels_parent_fk',
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [columns['mediaID']],
+      foreignColumns: [media.id],
+      name: 'skills_rels_media_fk',
+    }).onDelete('cascade'),
+  ],
+)
+
 export const activities_blocks_medias_page_medias = pgTable(
   'activities_blocks_medias_page_medias',
   {
@@ -377,6 +421,7 @@ export const activities_blocks_medias_page_medias = pgTable(
     _parentID: varchar('_parent_id').notNull(),
     id: varchar('id').primaryKey(),
     date: timestamp('date', { mode: 'string', withTimezone: true, precision: 3 }),
+    folder: varchar('folder'),
   },
   (columns) => [
     index('activities_blocks_medias_page_medias_order_idx').on(columns._order),
@@ -759,43 +804,22 @@ export const about_page_other_awwards = pgTable(
     _order: integer('_order').notNull(),
     _parentID: integer('_parent_id').notNull(),
     id: varchar('id').primaryKey(),
-    project: varchar('project').notNull(),
+    project: integer('project_id')
+      .notNull()
+      .references(() => projects.id, {
+        onDelete: 'set null',
+      }),
     awwarder: varchar('awwarder').notNull(),
     mention: varchar('mention').notNull(),
   },
   (columns) => [
     index('about_page_other_awwards_order_idx').on(columns._order),
     index('about_page_other_awwards_parent_id_idx').on(columns._parentID),
+    index('about_page_other_awwards_project_idx').on(columns.project),
     foreignKey({
       columns: [columns['_parentID']],
       foreignColumns: [about_page.id],
       name: 'about_page_other_awwards_parent_id_fk',
-    }).onDelete('cascade'),
-  ],
-)
-
-export const about_page_other_skills = pgTable(
-  'about_page_other_skills',
-  {
-    _order: integer('_order').notNull(),
-    _parentID: integer('_parent_id').notNull(),
-    id: varchar('id').primaryKey(),
-    skillName: varchar('skill_name').notNull(),
-    description: varchar('description').notNull(),
-    images: integer('images_id')
-      .notNull()
-      .references(() => media.id, {
-        onDelete: 'set null',
-      }),
-  },
-  (columns) => [
-    index('about_page_other_skills_order_idx').on(columns._order),
-    index('about_page_other_skills_parent_id_idx').on(columns._parentID),
-    index('about_page_other_skills_images_idx').on(columns.images),
-    foreignKey({
-      columns: [columns['_parentID']],
-      foreignColumns: [about_page.id],
-      name: 'about_page_other_skills_parent_id_fk',
     }).onDelete('cascade'),
   ],
 )
@@ -837,6 +861,7 @@ export const about_page_rels = pgTable(
     path: varchar('path').notNull(),
     mediaID: integer('media_id'),
     activitiesID: integer('activities_id'),
+    skillsID: integer('skills_id'),
   },
   (columns) => [
     index('about_page_rels_order_idx').on(columns.order),
@@ -844,6 +869,7 @@ export const about_page_rels = pgTable(
     index('about_page_rels_path_idx').on(columns.path),
     index('about_page_rels_media_id_idx').on(columns.mediaID),
     index('about_page_rels_activities_id_idx').on(columns.activitiesID),
+    index('about_page_rels_skills_id_idx').on(columns.skillsID),
     foreignKey({
       columns: [columns['parent']],
       foreignColumns: [about_page.id],
@@ -858,6 +884,11 @@ export const about_page_rels = pgTable(
       columns: [columns['activitiesID']],
       foreignColumns: [activities.id],
       name: 'about_page_rels_activities_fk',
+    }).onDelete('cascade'),
+    foreignKey({
+      columns: [columns['skillsID']],
+      foreignColumns: [skills.id],
+      name: 'about_page_rels_skills_fk',
     }).onDelete('cascade'),
   ],
 )
@@ -875,16 +906,11 @@ export const relations_users = relations(users, ({ many }) => ({
   }),
 }))
 export const relations_media = relations(media, () => ({}))
-export const relations_collaborators_socials = relations(collaborators_socials, ({ one }) => ({
-  _parentID: one(collaborators, {
-    fields: [collaborators_socials._parentID],
-    references: [collaborators.id],
-    relationName: 'socials',
-  }),
-}))
-export const relations_collaborators = relations(collaborators, ({ many }) => ({
-  socials: many(collaborators_socials, {
-    relationName: 'socials',
+export const relations_collaborators = relations(collaborators, ({ one }) => ({
+  avatar: one(media, {
+    fields: [collaborators.avatar],
+    references: [media.id],
+    relationName: 'avatar',
   }),
 }))
 export const relations_projects_collaborators = relations(projects_collaborators, ({ one }) => ({
@@ -899,43 +925,44 @@ export const relations_projects_collaborators = relations(projects_collaborators
     relationName: 'collaborator',
   }),
 }))
-export const relations_projects_images = relations(projects_images, ({ one }) => ({
-  _parentID: one(projects, {
-    fields: [projects_images._parentID],
-    references: [projects.id],
-    relationName: 'images',
-  }),
-  image: one(media, {
-    fields: [projects_images.image],
-    references: [media.id],
-    relationName: 'image',
-  }),
-}))
-export const relations_projects_blocks_project_section_images = relations(
-  projects_blocks_project_section_images,
+export const relations_projects_project_contents_image_groups_images = relations(
+  projects_project_contents_image_groups_images,
   ({ one }) => ({
-    _parentID: one(projects_blocks_project_section, {
-      fields: [projects_blocks_project_section_images._parentID],
-      references: [projects_blocks_project_section.id],
+    _parentID: one(projects_project_contents_image_groups, {
+      fields: [projects_project_contents_image_groups_images._parentID],
+      references: [projects_project_contents_image_groups.id],
       relationName: 'images',
     }),
     image: one(media, {
-      fields: [projects_blocks_project_section_images.image],
+      fields: [projects_project_contents_image_groups_images.image],
       references: [media.id],
       relationName: 'image',
     }),
   }),
 )
-export const relations_projects_blocks_project_section = relations(
-  projects_blocks_project_section,
+export const relations_projects_project_contents_image_groups = relations(
+  projects_project_contents_image_groups,
+  ({ one, many }) => ({
+    _parentID: one(projects_project_contents, {
+      fields: [projects_project_contents_image_groups._parentID],
+      references: [projects_project_contents.id],
+      relationName: 'imageGroups',
+    }),
+    images: many(projects_project_contents_image_groups_images, {
+      relationName: 'images',
+    }),
+  }),
+)
+export const relations_projects_project_contents = relations(
+  projects_project_contents,
   ({ one, many }) => ({
     _parentID: one(projects, {
-      fields: [projects_blocks_project_section._parentID],
+      fields: [projects_project_contents._parentID],
       references: [projects.id],
-      relationName: '_blocks_projectSection',
+      relationName: 'projectContents',
     }),
-    images: many(projects_blocks_project_section_images, {
-      relationName: 'images',
+    imageGroups: many(projects_project_contents_image_groups, {
+      relationName: 'imageGroups',
     }),
   }),
 )
@@ -962,11 +989,6 @@ export const relations_projects = relations(projects, ({ one, many }) => ({
     references: [media.id],
     relationName: 'cover',
   }),
-  showreel: one(media, {
-    fields: [projects.showreel],
-    references: [media.id],
-    relationName: 'showreel',
-  }),
   projectType: one(project_types, {
     fields: [projects.projectType],
     references: [project_types.id],
@@ -975,11 +997,8 @@ export const relations_projects = relations(projects, ({ one, many }) => ({
   collaborators: many(projects_collaborators, {
     relationName: 'collaborators',
   }),
-  images: many(projects_images, {
-    relationName: 'images',
-  }),
-  _blocks_projectSection: many(projects_blocks_project_section, {
-    relationName: '_blocks_projectSection',
+  projectContents: many(projects_project_contents, {
+    relationName: 'projectContents',
   }),
   _rels: many(projects_rels, {
     relationName: '_rels',
@@ -987,7 +1006,23 @@ export const relations_projects = relations(projects, ({ one, many }) => ({
 }))
 export const relations_roles = relations(roles, () => ({}))
 export const relations_project_types = relations(project_types, () => ({}))
-export const relations_skills = relations(skills, () => ({}))
+export const relations_skills_rels = relations(skills_rels, ({ one }) => ({
+  parent: one(skills, {
+    fields: [skills_rels.parent],
+    references: [skills.id],
+    relationName: '_rels',
+  }),
+  mediaID: one(media, {
+    fields: [skills_rels.mediaID],
+    references: [media.id],
+    relationName: 'media',
+  }),
+}))
+export const relations_skills = relations(skills, ({ many }) => ({
+  _rels: many(skills_rels, {
+    relationName: '_rels',
+  }),
+}))
 export const relations_activities_blocks_medias_page_medias = relations(
   activities_blocks_medias_page_medias,
   ({ one }) => ({
@@ -1185,20 +1220,13 @@ export const relations_about_page_other_awwards = relations(
       references: [about_page.id],
       relationName: 'Other_awwards',
     }),
+    project: one(projects, {
+      fields: [about_page_other_awwards.project],
+      references: [projects.id],
+      relationName: 'project',
+    }),
   }),
 )
-export const relations_about_page_other_skills = relations(about_page_other_skills, ({ one }) => ({
-  _parentID: one(about_page, {
-    fields: [about_page_other_skills._parentID],
-    references: [about_page.id],
-    relationName: 'Other_skills',
-  }),
-  images: one(media, {
-    fields: [about_page_other_skills.images],
-    references: [media.id],
-    relationName: 'images',
-  }),
-}))
 export const relations_about_page_rels = relations(about_page_rels, ({ one }) => ({
   parent: one(about_page, {
     fields: [about_page_rels.parent],
@@ -1214,6 +1242,11 @@ export const relations_about_page_rels = relations(about_page_rels, ({ one }) =>
     fields: [about_page_rels.activitiesID],
     references: [activities.id],
     relationName: 'activities',
+  }),
+  skillsID: one(skills, {
+    fields: [about_page_rels.skillsID],
+    references: [skills.id],
+    relationName: 'skills',
   }),
 }))
 export const relations_about_page = relations(about_page, ({ one, many }) => ({
@@ -1239,9 +1272,6 @@ export const relations_about_page = relations(about_page, ({ one, many }) => ({
   Other_awwards: many(about_page_other_awwards, {
     relationName: 'Other_awwards',
   }),
-  Other_skills: many(about_page_other_skills, {
-    relationName: 'Other_skills',
-  }),
   _rels: many(about_page_rels, {
     relationName: '_rels',
   }),
@@ -1249,21 +1279,22 @@ export const relations_about_page = relations(about_page, ({ one, many }) => ({
 
 type DatabaseSchema = {
   enum__locales: typeof enum__locales
-  enum_collaborators_socials_platform: typeof enum_collaborators_socials_platform
+  enum_projects_project_contents_image_groups_images_ratio: typeof enum_projects_project_contents_image_groups_images_ratio
+  enum_projects_project_contents_image_groups_display: typeof enum_projects_project_contents_image_groups_display
   users_sessions: typeof users_sessions
   users: typeof users
   media: typeof media
-  collaborators_socials: typeof collaborators_socials
   collaborators: typeof collaborators
   projects_collaborators: typeof projects_collaborators
-  projects_images: typeof projects_images
-  projects_blocks_project_section_images: typeof projects_blocks_project_section_images
-  projects_blocks_project_section: typeof projects_blocks_project_section
+  projects_project_contents_image_groups_images: typeof projects_project_contents_image_groups_images
+  projects_project_contents_image_groups: typeof projects_project_contents_image_groups
+  projects_project_contents: typeof projects_project_contents
   projects: typeof projects
   projects_rels: typeof projects_rels
   roles: typeof roles
   project_types: typeof project_types
   skills: typeof skills
+  skills_rels: typeof skills_rels
   activities_blocks_medias_page_medias: typeof activities_blocks_medias_page_medias
   activities_blocks_medias_page: typeof activities_blocks_medias_page
   activities_blocks_music_page_showcase_playlists: typeof activities_blocks_music_page_showcase_playlists
@@ -1280,22 +1311,21 @@ type DatabaseSchema = {
   about_page_other_experiences: typeof about_page_other_experiences
   about_page_other_education: typeof about_page_other_education
   about_page_other_awwards: typeof about_page_other_awwards
-  about_page_other_skills: typeof about_page_other_skills
   about_page: typeof about_page
   about_page_rels: typeof about_page_rels
   relations_users_sessions: typeof relations_users_sessions
   relations_users: typeof relations_users
   relations_media: typeof relations_media
-  relations_collaborators_socials: typeof relations_collaborators_socials
   relations_collaborators: typeof relations_collaborators
   relations_projects_collaborators: typeof relations_projects_collaborators
-  relations_projects_images: typeof relations_projects_images
-  relations_projects_blocks_project_section_images: typeof relations_projects_blocks_project_section_images
-  relations_projects_blocks_project_section: typeof relations_projects_blocks_project_section
+  relations_projects_project_contents_image_groups_images: typeof relations_projects_project_contents_image_groups_images
+  relations_projects_project_contents_image_groups: typeof relations_projects_project_contents_image_groups
+  relations_projects_project_contents: typeof relations_projects_project_contents
   relations_projects_rels: typeof relations_projects_rels
   relations_projects: typeof relations_projects
   relations_roles: typeof relations_roles
   relations_project_types: typeof relations_project_types
+  relations_skills_rels: typeof relations_skills_rels
   relations_skills: typeof relations_skills
   relations_activities_blocks_medias_page_medias: typeof relations_activities_blocks_medias_page_medias
   relations_activities_blocks_medias_page: typeof relations_activities_blocks_medias_page
@@ -1313,7 +1343,6 @@ type DatabaseSchema = {
   relations_about_page_other_experiences: typeof relations_about_page_other_experiences
   relations_about_page_other_education: typeof relations_about_page_other_education
   relations_about_page_other_awwards: typeof relations_about_page_other_awwards
-  relations_about_page_other_skills: typeof relations_about_page_other_skills
   relations_about_page_rels: typeof relations_about_page_rels
   relations_about_page: typeof relations_about_page
 }
