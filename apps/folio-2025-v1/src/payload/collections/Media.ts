@@ -16,6 +16,7 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
+    staticDir: 'media',
     imageSizes: [
       {
         name: '4/3',
