@@ -50,6 +50,3 @@ export const env = {
   IS_PRODUCTION,
   IS_DEVELOPMENT,
 } as const
-
-console.log(process.env.NODE_ENV)
-console.log(env)
