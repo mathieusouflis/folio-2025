@@ -21,18 +21,19 @@ function getEnvOptional(key: string, fallback = ''): string {
   return process.env[key] || fallback
 }
 
-export const DATABASE_URI = getEnvOptional(
-  'DATABASE_URI',
-  getEnvOptional('DATABASE_DEV_URI', 'postgresql://localhost:5432/payload'),
-)
+export const NODE_ENV = getEnvOptional('NODE_ENV', 'development')
+export const IS_PRODUCTION = NODE_ENV === 'production'
+export const IS_DEVELOPMENT = NODE_ENV === 'development'
+
+console.log(NODE_ENV)
+
+export const DATABASE_URI = IS_PRODUCTION
+  ? getEnv('DATABASE_URI')
+  : getEnvOptional('DATABASE_DEV_URI', 'postgresql://localhost:5432/payload')
 
 export const PAYLOAD_SECRET = getEnv('PAYLOAD_SECRET')
 
 export const BLOB_READ_WRITE_TOKEN = getEnvOptional('BLOB_NEXT_READ_WRITE_TOKEN')
-
-export const NODE_ENV = getEnvOptional('NODE_ENV', 'development')
-export const IS_PRODUCTION = NODE_ENV === 'production'
-export const IS_DEVELOPMENT = NODE_ENV === 'development'
 
 export const env = {
   DATABASE_URI,
