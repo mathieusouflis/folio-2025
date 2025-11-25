@@ -1,4 +1,3 @@
-// storage-adapter-import-placeholder
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -6,6 +5,8 @@ import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+
+import { PAYLOAD_SECRET, DATABASE_URI } from './lib/env'
 import { Users } from './payload/collections/Users'
 import { Media } from './payload/collections/Media'
 import { Collaborators } from './payload/collections/Collaborators'
@@ -39,16 +40,13 @@ export default buildConfig({
   ],
   globals: [AboutPage],
   editor: lexicalEditor(),
-  secret: process.env.PAYLOAD_SECRET || '',
+  secret: PAYLOAD_SECRET,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
     pool: {
-      connectionString:
-        process.env.DATABASE_URI ||
-        process.env.DATABASE_DEV_URI ||
-        'postgresql://localhost:5432/payload',
+      connectionString: DATABASE_URI,
     },
   }),
   localization: {
