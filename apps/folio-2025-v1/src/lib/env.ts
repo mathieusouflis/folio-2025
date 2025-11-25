@@ -18,6 +18,9 @@ function getEnv(key: string): string {
 }
 
 function getEnvOptional(key: string, fallback = ''): string {
+  if (!process.env[key]) {
+    console.warn(`Missing optional environment variable: ${key}\nSetting it to ${fallback}`)
+  }
   return process.env[key] || fallback
 }
 
