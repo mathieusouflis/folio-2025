@@ -12,21 +12,21 @@ config({ path: resolve(rootDir, '.env.local'), override: true })
 function getEnv(key: string): string {
   const value = process.env[key]
   if (!value) {
-    throw new Error(`Missing required environment variable: ${key}`)
+    throw new Error(`Missing required NODE_ENV variable: ${key}`)
   }
   return value
 }
 
 function getEnvOptional(key: string, fallback = ''): string {
   if (!process.env[key]) {
-    console.warn(`Missing optional environment variable: ${key}\nSetting it to ${fallback}`)
+    console.warn(`Missing optional NODE_ENV variable: ${key}\nSetting it to ${fallback}`)
   }
   return process.env[key] || fallback
 }
 
-export const APP_ENVIRONMENT = getEnvOptional('APP_ENVIRONMENT', 'development')
-export const IS_PRODUCTION = APP_ENVIRONMENT === 'production'
-export const IS_DEVELOPMENT = APP_ENVIRONMENT === 'development'
+export const NODE_ENV = getEnvOptional('NODE_ENV', 'development')
+export const IS_PRODUCTION = NODE_ENV === 'production'
+export const IS_DEVELOPMENT = NODE_ENV === 'development'
 
 export const DATABASE_URI = IS_PRODUCTION
   ? getEnv('DATABASE_URI')
@@ -42,7 +42,7 @@ export const BUCKET_NAME = getEnvOptional('BUCKET_NAME')
 export const env = {
   DATABASE_URI,
   PAYLOAD_SECRET,
-  APP_ENVIRONMENT,
+  NODE_ENV,
   BUCKET_ACCESS_KEY_ID,
   BUCKET_SECRET_ACCESS_KEY,
   BUCKET_ENDPOINT,
@@ -51,4 +51,5 @@ export const env = {
   IS_DEVELOPMENT,
 } as const
 
+console.log(process.env.NODE_ENV)
 console.log(env)
