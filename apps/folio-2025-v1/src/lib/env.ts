@@ -21,9 +21,9 @@ function getEnvOptional(key: string, fallback = ''): string {
   return process.env[key] || fallback
 }
 
-export const APP_ENV = getEnvOptional('APP_ENV', 'development')
-export const IS_PRODUCTION = APP_ENV === 'production'
-export const IS_DEVELOPMENT = APP_ENV === 'development'
+export const APP_ENVIRONMENT = getEnvOptional('APP_ENVIRONMENT', 'development')
+export const IS_PRODUCTION = APP_ENVIRONMENT === 'production'
+export const IS_DEVELOPMENT = APP_ENVIRONMENT === 'development'
 
 export const DATABASE_URI = IS_PRODUCTION
   ? getEnv('DATABASE_URI')
@@ -39,7 +39,7 @@ export const BUCKET_NAME = getEnvOptional('BUCKET_NAME')
 export const env = {
   DATABASE_URI,
   PAYLOAD_SECRET,
-  APP_ENV,
+  APP_ENVIRONMENT,
   BUCKET_ACCESS_KEY_ID,
   BUCKET_SECRET_ACCESS_KEY,
   BUCKET_ENDPOINT,
@@ -47,3 +47,5 @@ export const env = {
   IS_PRODUCTION,
   IS_DEVELOPMENT,
 } as const
+
+console.log(env)
