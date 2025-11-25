@@ -22,10 +22,10 @@ function getEnvOptional(key: string, fallback = ''): string {
 }
 
 export const NODE_ENV = getEnvOptional('NODE_ENV', 'development')
-export const IS_PRODUCTION = NODE_ENV === 'production'
-export const IS_DEVELOPMENT = NODE_ENV === 'development'
 
-console.log(NODE_ENV)
+export const APP_ENV = getEnvOptional('APP_ENV', 'development')
+export const IS_PRODUCTION = APP_ENV === 'production'
+export const IS_DEVELOPMENT = APP_ENV === 'development'
 
 export const DATABASE_URI = IS_PRODUCTION
   ? getEnv('DATABASE_URI')
@@ -35,11 +35,20 @@ export const PAYLOAD_SECRET = getEnv('PAYLOAD_SECRET')
 
 export const BLOB_READ_WRITE_TOKEN = getEnvOptional('BLOB_NEXT_READ_WRITE_TOKEN')
 
+export const BUCKET_ACCESS_KEY_ID = getEnvOptional('BUCKET_ACCESS_KEY_ID')
+export const BUCKET_SECRET_ACCESS_KEY = getEnvOptional('BUCKET_SECRET_ACCESS_KEY')
+export const BUCKET_ENDPOINT = getEnvOptional('BUCKET_ENDPOINT')
+export const BUCKET_NAME = getEnvOptional('BUCKET_NAME')
+
 export const env = {
   DATABASE_URI,
   PAYLOAD_SECRET,
   BLOB_READ_WRITE_TOKEN,
   NODE_ENV,
+  BUCKET_ACCESS_KEY_ID,
+  BUCKET_SECRET_ACCESS_KEY,
+  BUCKET_ENDPOINT,
+  BUCKET_NAME,
   IS_PRODUCTION,
   IS_DEVELOPMENT,
 } as const
