@@ -3,6 +3,7 @@ import { Media, Project } from '@/payload-types'
 import Link from 'next/link'
 import Image from 'next/image'
 import { TP } from '@/components/typograpgy/p'
+import { PayloadImage } from '@/components/base/payload-image'
 
 // function Prevarrow() {
 //   return (
@@ -88,7 +89,7 @@ function ProjectNavigation(props: { type: 'next' | 'prev'; id: number; image: Me
       ) : (
         <TP className="font-made-mirage text-5xl uppercase">Previous</TP>
       )}
-      <Image
+      <PayloadImage
         src={props.image.url ?? ''}
         alt={props.image.alt}
         width={4000}

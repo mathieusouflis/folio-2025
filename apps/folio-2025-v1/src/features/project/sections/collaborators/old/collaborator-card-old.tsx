@@ -9,6 +9,7 @@ import { useRef, useState } from 'react'
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { SplitText } from 'gsap/all'
+import { PayloadImage } from '@/components/base/payload-image'
 
 export function CollaboratorCard(props: {
   collaborator: Collaborator
@@ -105,7 +106,7 @@ export function CollaboratorCard(props: {
       onMouseLeave={() => setHovering(false)}
     >
       <span className="overflow-hidden w-full h-full flex">
-        <Image
+        <PayloadImage
           ref={imageRef}
           src={avatar || ''}
           alt={`${collaboratorName} photo.`}
