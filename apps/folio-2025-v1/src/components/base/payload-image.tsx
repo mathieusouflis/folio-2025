@@ -1,6 +1,6 @@
 "use client";
 
-import { IS_PRODUCTION } from "@/lib/env";
+import { IS_PRODUCTION } from "@/lib/env-client";
 import Image from "next/image";
 
 
