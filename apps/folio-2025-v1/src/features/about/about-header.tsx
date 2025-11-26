@@ -7,6 +7,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ResumeDownload } from './resume-download'
 import { SectionGridFullPage } from '@/components/base/section-full-page'
+import { PayloadImage } from '@/components/base/payload-image'
 
 export function AboutHeader(props: { aboutPage: AboutPage }) {
   const aboutPage = props.aboutPage
@@ -25,7 +26,7 @@ export function AboutHeader(props: { aboutPage: AboutPage }) {
   return (
     <SectionGridFullPage className="pt-10">
       <Grid withMargins={false} className="h-full">
-        <Image
+        <PayloadImage
           src={sidePhoto?.url ?? ''}
           alt={sidePhoto?.alt ?? ''}
           width={4000}

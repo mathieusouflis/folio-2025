@@ -1,5 +1,6 @@
 'use client'
 
+import { PayloadImage } from '@/components/base/payload-image'
 import { useCursor } from '@/components/contexts/follow-cursor'
 import { TDisplay } from '@/components/typograpgy/display'
 import { TP } from '@/components/typograpgy/p'
@@ -59,7 +60,7 @@ export function ProjectShowcase(props: {
           <TDisplay className="text-white mix-blend-difference">{props.title}</TDisplay>
         </div>
         {props.cover && (
-          <Image
+          <PayloadImage
             src={props.cover.url!}
             alt={props.cover.alt}
             width={1920}

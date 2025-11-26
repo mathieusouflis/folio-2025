@@ -1,3 +1,4 @@
+import { PayloadImage } from '@/components/base/payload-image'
 import { RichText } from '@/components/base/rich-text'
 import { SectionGridFullPage } from '@/components/base/section-full-page'
 import { cn } from '@/lib/utils/cn'
@@ -67,7 +68,7 @@ function ProjectContentArticle({
                           'w-full',
                       )}
                     >
-                      <Image
+                      <PayloadImage
                         src={image.image.url ?? ''}
                         alt={image.image.alt}
                         width={width}

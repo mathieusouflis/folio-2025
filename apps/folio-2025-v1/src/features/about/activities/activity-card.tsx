@@ -1,3 +1,4 @@
+import { PayloadImage } from '@/components/base/payload-image'
 import { TP } from '@/components/typograpgy/p'
 import { Activity } from '@/payload-types'
 import Image from 'next/image'
@@ -9,7 +10,7 @@ export function ActivityCard({ activity }: { activity: Activity }) {
 
   return (
     <div className="flex flex-col gap-2 items-center max-h-[500px] h-full">
-      <Image
+      <PayloadImage
         src={activity.cover.url ?? ''}
         alt={activity.name}
         width={3000}

@@ -4,6 +4,7 @@ import { Media } from '@/payload-types'
 import Image from 'next/image'
 import { TP } from '@/components/typograpgy/p'
 import { Grid, GridItem } from '@/components/layout/Grid'
+import { PayloadImage } from '@/components/base/payload-image'
 
 export function ProjectHeaderSection(params: {
   title: string
@@ -31,7 +32,7 @@ export function ProjectHeaderSection(params: {
         </Grid>
       </div>
       {params.showreel && typeof params.showreel === 'object' && (
-        <Image
+        <PayloadImage
           src={params.showreel?.url || ''}
           alt={params.showreel?.alt || ''}
           width={params.showreel?.width || 0}

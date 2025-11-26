@@ -1,5 +1,6 @@
 'use client'
 
+import { PayloadImage } from '@/components/base/payload-image'
 import { SectionGridFullPage } from '@/components/base/section-full-page'
 import { TDisplay } from '@/components/typograpgy/display'
 import { Skill } from '@/payload-types'
@@ -368,7 +369,7 @@ export function AboutSkills(props: { skills: (number | Skill)[] }) {
                   }}
                   className="absolute top-1/2 -translate-y-1/2 flex justify-center items-center w-full aspect-video"
                 >
-                  <Image
+                  <PayloadImage
                     ref={(el) => {
                       if (!imageRefs.current[skillIndex]) {
                         imageRefs.current[skillIndex] = []
