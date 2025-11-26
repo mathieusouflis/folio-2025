@@ -1,5 +1,5 @@
 import React from 'react'
-import './styles.css'
+import './globals.css'
 import { MainLayout } from '@/components/layout/Main'
 import localFont from 'next/font/local'
 import { Geist } from 'next/font/google'
