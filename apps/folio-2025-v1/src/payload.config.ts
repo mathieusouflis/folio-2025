@@ -55,9 +55,6 @@ export default buildConfig({
     defaultLocale: 'en',
   },
   plugins: [
-    // payloadCloudPlugin(),
-    // storage-adapter-placeholder
-
     ...(env.IS_PRODUCTION
       ? [
           s3Storage({
