@@ -1,8 +1,8 @@
 "use client";
 
+import { IS_PRODUCTION } from "@/lib/env";
 import Image from "next/image";
 
-const IS_PRODUCTION = process.env.APP_ENV === "production";
 
 const simpleImageLoader = ({src}: {src: any}) => {
   return src;
