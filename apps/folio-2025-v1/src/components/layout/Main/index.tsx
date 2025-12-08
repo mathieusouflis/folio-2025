@@ -7,7 +7,6 @@ import { GridOverlayToggle } from '@/components/ui/grid-overlay-toggle'
 export function MainLayout(props: { children: React.ReactNode }) {
   return (
     <>
-      <FollowCursor />
       <GridPreview />
       <Nav />
       <main className="flex flex-col">{props.children}</main>
