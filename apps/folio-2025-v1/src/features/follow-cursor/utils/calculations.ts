@@ -15,4 +15,3 @@ export function calculatePosition(
     y: y - offsetY,
   }
 }
-
