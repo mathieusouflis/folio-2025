@@ -7,7 +7,7 @@ import { getPayload } from 'payload'
 export default async function Page({ params }: { params: { id: string } }) {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
-  const { id } = params
+  const { id } = await params
 
   let project: Project
   let previousProject: Project | null = null
