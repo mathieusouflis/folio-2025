@@ -25,4 +25,3 @@ export const TEXT_BOX_ROTATION = {
   default: 0,
   exit: -12,
 } as const
-

@@ -12,6 +12,53 @@
   --color-border: var(--theme-border);
   --color-accent: var(--theme-accent);
   --color-accent-foreground: var(--theme-accent-foreground);
+
+  --animate-grow-w: growW 1.5s 0.8s forwards;
+  @keyframes growW {
+    0% {
+      width: 0px;
+    }
+    100% {
+      width: 100%;
+    }
+  }
+
+  --animate-grow-h: growH 1.5s 0.8s forwards;
+  @keyframes growH {
+    0% {
+      height: 0px;
+    }
+    100% {
+      height: 100%;
+    }
+  }
+  --animate-grow-h-1-2: growH12 1.5s 0.8s forwards;
+  @keyframes growH12 {
+    0% {
+      height: 0px;
+    }
+    100% {
+      height: 50%;
+    }
+  }
+  --animate-grow-h-2-screens: growH2Screens 1.5s forwards;
+  @keyframes growH2Screens {
+    0% {
+      height: 0px;
+    }
+    100% {
+      height: 200vh;
+    }
+  }
+  --animate-grow-w-2-screens: growW2Screens 1.5s forwards;
+  @keyframes growW2Screens {
+    0% {
+      width: 0px;
+    }
+    100% {
+      width: 200vw;
+    }
+  }
 }
 
 :root {
