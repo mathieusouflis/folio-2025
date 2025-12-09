@@ -8,7 +8,10 @@ import { ThemeToggle } from '@/components/ui/theme-toggle'
 export function Nav() {
   return (
     <nav className="fixed top-0 left-0 z-50 w-full px-(--gridMargin) py-2 flex flex-row justify-between text-foreground mix-blend-difference transition-colors duration-300">
-      <BrandIcon size={'xl'} color="white" />
+      <Link href="/">
+        {' '}
+        <BrandIcon size={'xl'} color="white" />
+      </Link>
       <div className="flex flex-row items-center gap-5 text-white">
         <NavLinks href="/">Works</NavLinks>
         <NavLinks href="/archives">Archives</NavLinks>
