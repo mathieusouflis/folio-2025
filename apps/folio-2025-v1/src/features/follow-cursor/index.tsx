@@ -6,7 +6,6 @@ import { useCursorPoint } from './hooks/useCursorPoint'
 import { useTextBox } from './hooks/useTextBox'
 import { useTextTransition } from './hooks/useTextTransition'
 import { CursorPoint } from './components/CursorPoint'
-import { TextBox } from './components/TextBox'
 
 export function FollowCursor() {
   const pointRef = useRef<HTMLDivElement>(null)
@@ -22,9 +21,12 @@ export function FollowCursor() {
   if (!isVisible) return null
 
   return (
-    <>
-      <CursorPoint ref={pointRef} />
-      <TextBox ref={textBoxRef} textContentRef={textContentRef} displayText={displayText} />
-    </>
+    <span className='fixed z-1000 pointer-events-none flex items-center justify-center' ref={pointRef}>
+      <span className="relative w-full h-full flex-items-center justify-center">
+      {/*<CursorContainer>*/}
+        <CursorPoint />
+      {/*</CursorContainer>*/}
+      </span>
+    </span>
   )
 }
